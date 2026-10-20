@@ -66,10 +66,23 @@ function seg(name, label, items){
     return '<button type="button" id="'+name+'-'+it[0]+'" data-'+name+'="'+it[0]+'" aria-pressed="'+(state[name]===it[0])+'">'+it[1]+'</button>';
   }).join('')+'</div>';
 }
+var FORMSPREE_ID=''; // settes når Formspree-skjemaet er laget
+function nextMonday(){var d=new Date();var add=(8-d.getDay())%7||7;d.setDate(d.getDate()+add);return d.toLocaleDateString('nb-NO',{weekday:'long',day:'numeric',month:'long'});}
+function suggestHtml(none){
+  if(!FORMSPREE_ID||!state.q.trim())return '';
+  var q=esc(state.q.trim());
+  return '<div class="suggest" id="suggest"><h3>'+(none?'Vi har ikke «'+q+'» ennå':'Fant du ikke modellen du lette etter?')+'</h3>'+
+    '<p class="small">Foreslå den, så ser vi etter den på Prisjakt ved neste oppdatering ('+nextMonday()+'). Finnes den som løpesko der, kommer den med i rangeringen.</p>'+
+    '<form class="qform" id="sform"><label for="sq" class="sr">Modell du vil ha med</label>'+
+    '<input id="sq" class="field-input" name="modell" maxlength="80" required value="'+q+'" autocomplete="off">'+
+    '<input type="text" name="_gotcha" tabindex="-1" autocomplete="off" class="sr" aria-hidden="true">'+
+    '<button type="submit" class="btn">Foreslå</button></form><p class="small s-msg" id="smsg" aria-live="polite"></p></div>';
+}
 function ladderHtml(){
   var all=filtered(), shown=all.slice(0,state.limit); setAxis(all.length?all:SHOES);
   var h='<p class="count" aria-live="polite">Viser '+shown.length+' av '+all.length+' sko'+(all.length!==SHOES.length?' (filtrert fra '+SHOES.length+')':'')+'.</p>';
   h+='<div class="ladder">'+axisRow()+(shown.length?shown.map(function(s,i){return row(s,{animate:animateNext,rank:i+1});}).join(''):'<p class="small" style="padding:16px 8px">Ingen sko passer filteret. Prøv et annet merke eller fjern søket.</p>')+'</div>';
+  h+=suggestHtml(!all.length);
   if(all.length>shown.length) h+='<button type="button" class="more" id="more">Vis alle '+all.length+'</button>';
   return h;
 }
@@ -363,7 +376,9 @@ function privacyPage(){
   '<li>Ingen informasjonskapsler (cookies), ingen sporing og ingen annonser.</li>'+
   '<li>Søk, filtre, kalkulatoren og spørsmålene i «Velg sko» kjøres bare i nettleseren din. Ingenting av det sendes til oss.</li>'+
   '<li>Skrifttypene ligger på selve siden, så nettleseren din henter ingenting fra Google eller andre.</li>'+
-  '<li>Det finnes ingen skjemaer, kontoer eller nyhetsbrev.</li></ul></div>'+
+  '<li>Det finnes ingen kontoer eller nyhetsbrev.</li></ul></div>'+
+  (FORMSPREE_ID?'<div class="block"><h2>Forslag til nye sko</h2>'+
+  '<p>Finner du ikke en modell, kan du foreslå den. Skjemaet sender bare modellnavnet du skriver. Innsendingen går via tjenesten Formspree (USA), som videresender den til oss på e-post og lagrer den i en begrenset periode. Formspree registrerer også teknisk informasjon som IP-adresse for å stoppe spam. Vi bruker forslaget bare til å vurdere om skoen skal inn i rangeringen.</p></div>':'')+
   '<div class="block"><h2>Serverlogg hos webhotellet</h2>'+
   '<p>Siden ligger hos Domene AS i Norge. Som alle webhotell fører de en teknisk logg over besøk: IP-adresse, tidspunkt, hvilken side som ble åpnet og hvilken nettleser som ble brukt. Loggen brukes til drift og sikkerhet, ikke til å kartlegge deg, og slettes etter webhotellets faste rutiner.</p></div>'+
   '<div class="block"><h2>Lenker til andre nettsteder</h2>'+
@@ -408,6 +423,16 @@ document.addEventListener('click',function(e){
   state.limit=PAGE; refreshLadder();
 });
 document.addEventListener('submit',function(e){
+  if(e.target.id==='sform'){
+    e.preventDefault();
+    var f=e.target, msg=document.getElementById('smsg'), val=f.modell.value.trim(), btn=f.querySelector('button');
+    if(!val)return; btn.disabled=true; msg.textContent='Sender …';
+    fetch('https://formspree.io/f/'+FORMSPREE_ID,{method:'POST',headers:{'Accept':'application/json'},body:new FormData(f)})
+      .then(function(res){ if(!res.ok)throw new Error(res.status);
+        f.remove(); msg.textContent='Takk! «'+val+'» er registrert. Vi ser etter den ved oppdateringen '+nextMonday()+'.'; })
+      .catch(function(){ btn.disabled=false; msg.textContent='Det gikk ikke å sende akkurat nå. Prøv igjen, eller skriv til post@kmpris.no.'; });
+    return;
+  }
   if(e.target.id!=='qform')return; e.preventDefault();
   resetState(); state.q=document.getElementById('fq').value.trim(); animateNext=true; location.hash='skoene';
 });
