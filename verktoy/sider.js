@@ -138,6 +138,7 @@ ${richHtml}
 <div class="block"><h2>Tester og omtaler</h2>${testsHtml}</div>
 </div>
 <aside class="m-side">
+<div class="fit"><b>Prøv før du kjøper.</b> En sko som ikke passer, er aldri billig, uansett pris per kilometer. Prøv den i butikk eller kjøp der det er enkelt å returnere. <a href="/#velg">Slik velger du riktig sko</a> · <a href="/#storrelse">Finn riktig størrelse</a>.</div>
 <div class="calc"><h3>Regn selv</h3><p class="small">Fant du et annet tilbud, eller tror du skoen varer lenger for deg?</p>
 <div class="calc-inputs"><label for="cp">Pris i kr<input id="cp" type="number" min="1" inputmode="numeric" value="${best.nok}"></label>
 <label for="ck">Levetid i km<input id="ck" type="number" min="1" step="10" inputmode="numeric" value="${km}"></label></div>

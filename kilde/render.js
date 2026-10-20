@@ -92,6 +92,7 @@ function home(){
   var h='<main class="wrap">';
   h+='<div class="intro"><h1>Alle løpesko, billigst per kilometer</h1>'+
      '<p class="lede">'+MODEL_COUNT+' løpesko fra '+BRAND_LIST.length+' merker, asfalt og terreng, med egen rad for herre og dame. Filtrer på type, kjønn eller merke, eller søk etter modellen du vurderer.</p></div>';
+  h+='<div class="fit"><b>Tallene er gjennomsnitt, ikke garantier.</b> Hvor lenge en sko holder, avhenger av vekt, løpsstil og underlag. Tunge løpere og hælløpere sliter ofte raskere. Kjøp den som passer deg først, og bruk rangeringen til å sammenligne blant dem. På hver skoside kan du regne med din egen levetid.</div>';
   h+='<div class="controls">'+
      seg('cat','Type sko',[['alle','Alle'],['daglig','Trening'],['tempo','Tempo'],['konk','Konkurranse'],['terreng','Terreng']])+
      seg('g','Kjønn',[['alle','Alle'],['H','Herre'],['D','Dame']])+
@@ -124,7 +125,8 @@ function frontPage(){
   h+='<div class="front-hero"><div class="stack"><h1>Hva koster skoen per kilometer?</h1>'+
      '<p class="lede">Prislappen sier lite om hvor mye du får for pengene. KmPris deler prisen på hvor langt skoen holder, og rangerer '+MODEL_COUNT+' løpesko fra '+BRAND_LIST.length+' merker.</p>'+
      '<form class="qform" id="qform" role="search"><label for="fq" class="sr">Søk etter sko</label><input id="fq" class="field-input" type="search" placeholder="Søk etter modell" autocomplete="off"><button type="submit" class="btn">Søk</button></form>'+
-     '<p class="small">Eller <a href="#skoene" data-go="reset">se hele rangeringen</a>. Usikker på hva du trenger? <a href="#velg">Svar på tre spørsmål</a>.</p></div>'+
+     '<p class="small">Eller <a href="#skoene" data-go="reset">se hele rangeringen</a>. Usikker på hva du trenger? <a href="#velg">Svar på tre spørsmål</a>.</p>'+
+     '<div class="fit"><b>Passform først, pris etterpå.</b> Den billigste skoen per kilometer er bare et kupp hvis den passer foten din og løpesteget ditt. En sko som gir gnagsår eller vondt i knærne blir dyr uansett. Finn ut hvilke sko som passer deg, og bruk KmPris til å velge den som gir mest løping for pengene. <a href="#velg">Slik velger du riktig sko</a>.</div>'+'</div>'+
      '<div class="bib" aria-label="Billigste treningssko per kilometer"><div class="bib-top"><span>Billigst akkurat nå</span><span>Trening</span></div>'+
      '<div class="bib-num">'+kr(perKm(best),2)+'<small>kr/km</small></div>'+
      '<p class="bib-foot"><a href="'+shoeHref(best)+'">'+esc(best.brand+' '+best.name)+'</a>, '+GLABEL[best.g].toLowerCase()+', '+kr(best.nok,0)+' kr</p></div></div>';
