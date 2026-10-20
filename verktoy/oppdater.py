@@ -53,6 +53,8 @@ render = open(os.path.join(src, 'render.js'), encoding='utf-8').read()
 html = ('<!doctype html><html lang="no"><meta charset="utf-8">'
         '<meta name="viewport" content="width=device-width,initial-scale=1">' + head + data + render)
 open(os.path.join(root, 'index.html'), 'w', encoding='utf-8').write(html)
+import subprocess
+subprocess.run(['node', os.path.join(root, 'verktoy', 'sider.js')], check=True)
 
 lines = [f'# Prisoppdatering {today}', '',
          f'- Rader med ny pris: {len(changed)}', f'- Uendret: {same}',

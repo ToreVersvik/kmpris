@@ -6,3 +6,5 @@ parts = [open(os.path.join(src, f), encoding='utf-8').read() for f in ('head.htm
 html = '<!doctype html><html lang="no"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">' + ''.join(parts)
 open(os.path.join(root, 'index.html'), 'w', encoding='utf-8').write(html)
 print('index.html bygget,', len(html) // 1024, 'kB')
+import subprocess
+subprocess.run(['node', os.path.join(root, 'verktoy', 'sider.js')], check=True)

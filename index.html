@@ -879,7 +879,8 @@ var state = { cat:"alle", g:"alle", brand:"alle", q:"", sort:"km", limit:PAGE };
 var animateNext = true;
 
 function pct(v){ return Math.min(100, v/AX*100); }
-function shoeHref(s){ return s.detail ? '#'+s.detail : (s.pj ? 'https://www.prisjakt.no/product.php?p='+s.pj : 'https://www.prisjakt.no/search?query='+encodeURIComponent(s.brand+' '+s.name)); }
+function slugOf(s){ return (s.brand+' '+s.name).toLowerCase().replace(/æ/g,'ae').replace(/ø/g,'o').replace(/å/g,'a').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); }
+function shoeHref(s){ return '/sko/'+slugOf(s)+'/'; }
 function axisRow(){
   var st=axisStep(), ticks=[], n=Math.round(AX/st);
   for(var k=0;k<=n;k++){ var t=k*st, last=k===n; var minor=!last&&(k%2===1||n-k<2&&k!==0); ticks.push('<span class="tick'+(minor?' minor':'')+'" style="left:'+pct(t)+'%">'+kr(t,st<1?1:0)+(last?' kr/km':'')+'</span>'); }
@@ -896,7 +897,7 @@ function row(s, opts){
     '<span class="r-cat"><i class="sw" style="background:'+c.color+'"></i>'+(s.cat==='stabil'?'Stabilitet':c.label)+'</span>'+
     '<span class="r-price">'+(s.approx?'ca. ':'')+kr(s.nok,0)+' kr</span>'+
     '<span class="track" style="'+grid+'"><span class="stem" style="width:'+start+'%" data-x="'+x+'"></span>'+
-      '<span class="dot'+(s.detail?'':' ring')+'" style="left:'+start+'%" data-x="'+x+'"></span>'+
+      '<span class="dot" style="left:'+start+'%" data-x="'+x+'"></span>'+
       '<span class="val" data-x="'+x+'" data-flip="'+(flip?1:0)+'" style="left:calc('+start+'% '+(flip?'- 52px':'+ 12px')+')">'+kr(v,2)+'</span></span>'+
   '</'+tag+'>';
 }
@@ -959,7 +960,7 @@ function home(){
      seg('sort','Sortering',[['km','Billigst per km'],['pris','Lavest pris']])+
      '</div>';
   h+='<div id="ladder">'+ladderHtml()+'</div>';
-  h+='<div class="legend"><span><i class="lg-dot"></i>Egen side hos KmPris</span><span><i class="lg-ring"></i>Lenker til Prisjakt</span><span><span class="adj">lab</span> Levetid justert etter lab-test</span>'+
+  h+='<div class="legend"><span><span class="adj">lab</span> Levetid justert etter lab-test</span>'+
      Object.keys(CAT).map(function(k){return '<span><i class="sw" style="background:'+CAT[k].color+'"></i>'+CAT[k].label+'</span>';}).join('')+'</div>';
   h+='<p class="small" style="margin-top:12px">Prisen er laveste pris på '+PRICES_SOURCE.name+' '+PRICES_SOURCE.date+', som ofte gjelder tilbud i enkelte størrelser. Li-Ning finnes ikke på Prisjakt, så de prisene er omregnet fra euro med Norges Banks kurs '+SITE.eurNok.rate+' (sjekket 27.09.2026). Vanntette (GTX), piggede og barnemodeller er ikke med. Kjønnsfilteret viser også unisexmodeller.</p>';
   h+='</main>';

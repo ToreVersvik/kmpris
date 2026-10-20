@@ -19,12 +19,21 @@ with sync_playwright() as p:
         for h in pg.eval_on_selector_all('#app a[href^="#"]','els=>els.map(e=>e.getAttribute("href"))'):
             if h[1:] not in ids: problems.append(f'{i}: lenke {h}')
     pg.evaluate("location.hash='skoene'"); pg.wait_for_timeout(300)
+    for h in set(pg.eval_on_selector_all('a.lrow','e=>e.map(x=>x.getAttribute("href"))')):
+        if not os.path.exists(os.path.join(root, h.strip('/'), 'index.html')): problems.append('mangler side: ' + h)
     count = pg.inner_text('.count')
     if 'av 324' not in count and 'sko' not in count: problems.append('rangering: ' + count)
     m = b.new_page(viewport={'width':375,'height':900})
     for i in ['hjem','skoene','kjop']:
         m.goto(f + '#' + i); m.wait_for_timeout(300)
         if m.evaluate('document.documentElement.scrollWidth>window.innerWidth+1'): problems.append(f'mobil {i}: sidescroll')
+    import glob, re as _re
+    pages = sorted(glob.glob(os.path.join(root, 'sko', '*', 'index.html')))
+    if len(pages) < 150: problems.append(f'bare {len(pages)} skosider')
+    for fp in pages:
+        t = open(fp, encoding='utf-8').read()
+        for bad in ['undefined', 'NaN', 'Infinity', '[object']:
+            if bad in _re.sub(r'<script>.*?</script>', '', t, flags=_re.S): problems.append(f'{os.path.basename(os.path.dirname(fp))}: {bad}')
     b.close()
 problems += ['JS-feil: ' + e for e in errs]
 if problems:
