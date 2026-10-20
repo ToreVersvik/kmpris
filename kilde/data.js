@@ -503,7 +503,47 @@ var SHOES_RAW = [
 ];
 var SHOES = SHOES_RAW.map(function(r,i){ return { i:i, brand:r[0], name:r[1], cat:r[2], g:r[3], nok:r[4], pj:r[5], detail:r[6], approx:!!r[7] }; });
 function group(life){ return life==='stabil' ? 'daglig' : life; }
-function perKm(s){ return s.nok / LIFE[s.cat].km; }
+// Justering av levetid per modell ut fra lab-test av yttersålen (RunRepeat).
+// w = slitasje i mm (lavere er bedre), t = tykkelse i mm, aw/at = snittet RunRepeat oppgir.
+// f = sqrt((t/at)*(aw/w)), dempet til halv effekt og begrenset til 0,75–1,25. Sjekket 20.10.2026.
+var LIFE_ADJ = {
+  "Asics|Gel-Pulse 17": {w:0.6, t:3.3, aw:1.1, at:3.1, f:1.2, src:"https://runrepeat.com/asics-gel-pulse-17"},
+  "Adidas|Supernova Rise 3": {w:0.8, t:2.1, aw:1.1, at:3.1, f:0.98, src:"https://runrepeat.com/adidas-supernova-rise-3"},
+  "Nike|Winflo 12": {w:1.0, t:3.3, aw:1.1, at:3.1, f:1.04, src:"https://runrepeat.com/nike-winflo-12"},
+  "Saucony|Kinvara 16": {w:2.0, t:2.7, aw:1.1, at:3.1, f:0.85, src:"https://runrepeat.com/saucony-kinvara-16"},
+  "New Balance|FuelCell Propel v5": {w:1.1, t:3.2, aw:1.1, at:3.1, f:1.01, src:"https://runrepeat.com/new-balance-fuelcell-propel-v5"},
+  "Puma|Magnify Nitro 3": {w:1.3, t:3.8, aw:1.1, at:3.1, f:1.01, src:"https://runrepeat.com/puma-magnify-nitro-3"},
+  "Adidas|Adizero SL 2": {w:1.1, t:3.6, aw:1.1, at:3.1, f:1.04, src:"https://runrepeat.com/adidas-adizero-sl2"},
+  "Saucony|Ride 19": {w:0.6, t:3.5, aw:1.1, at:3.1, f:1.22, src:"https://runrepeat.com/saucony-ride-19"},
+  "Adidas|Adizero Boston 13": {w:0.5, t:2.3, aw:1.1, at:3.1, f:1.14, src:"https://runrepeat.com/adidas-adizero-boston-13"},
+  "Adidas|Adizero Evo SL": {w:0.6, t:1.6, aw:1.1, at:3.1, f:0.99, src:"https://runrepeat.com/adidas-adizero-evo-sl"},
+  "Puma|Deviate Nitro 4": {w:0.6, t:3.3, aw:1.1, at:3.1, f:1.2, src:"https://runrepeat.com/puma-deviate-nitro-4"},
+  "Hoka|Mach 7": {w:1.1, t:2.3, aw:1.1, at:3.1, f:0.93, src:"https://runrepeat.com/hoka-mach-7"},
+  "Mizuno|Wave Rebellion Flash 3": {w:1.3, t:2.1, aw:1.1, at:3.1, f:0.88, src:"https://runrepeat.com/mizuno-wave-rebellion-flash-3"},
+  "Asics|Magic Speed 5": {w:0.8, t:1.9, aw:1.1, at:3.1, f:0.96, src:"https://runrepeat.com/asics-magic-speed-5"},
+  "Saucony|Endorphin Speed 5": {w:1.0, t:2.5, aw:1.1, at:3.1, f:0.97, src:"https://runrepeat.com/saucony-endorphin-speed-5"},
+  "Brooks|Hyperion 3": {w:0.9, t:2.4, aw:1.1, at:3.1, f:0.99, src:"https://runrepeat.com/brooks-hyperion-3"},
+  "Saucony|Endorphin Trainer": {w:0.7, t:3.1, aw:1.1, at:3.1, f:1.13, src:"https://runrepeat.com/saucony-endorphin-trainer"},
+  "Nike|Zoom Fly 6": {w:0.8, t:3.2, aw:1.1, at:3.1, f:1.1, src:"https://runrepeat.com/nike-zoom-fly-6"},
+  "Adidas|Adizero Adios 9": {w:0.6, t:1.0, aw:1.1, at:3.1, f:0.88, src:"https://runrepeat.com/adidas-adizero-adios-9"},
+  "Mizuno|Wave Rebellion Pro 3": {w:1.4, t:2.5, aw:1.1, at:3.1, f:0.9, src:"https://runrepeat.com/mizuno-wave-rebellion-pro-3"},
+  "Nike|Streakfly 2": {w:1.7, t:2.4, aw:1.1, at:3.1, f:0.85, src:"https://runrepeat.com/nike-streakfly-2"},
+  "Nike|Vaporfly 4": {w:8.6, t:2.3, aw:1.1, at:3.1, f:0.75, src:"https://runrepeat.com/nike-vaporfly-4"},
+  "Hoka|Rocket X 3": {w:0.9, t:2.4, aw:1.1, at:3.1, f:0.99, src:"https://runrepeat.com/hoka-rocket-x-3"},
+  "Nike|Alphafly 3": {w:3.2, t:1.9, aw:1.1, at:3.1, f:0.75, src:"https://runrepeat.com/nike-alphafly-3"},
+  "Adidas|Adizero Adios Pro 4": {w:0.8, t:1.0, aw:1.1, at:3.1, f:0.83, src:"https://runrepeat.com/adidas-adizero-adios-pro-4"},
+  "On|Cloudboom Echo 3": {w:1.3, t:2.4, aw:1.1, at:3.1, f:0.9, src:"https://runrepeat.com/on-cloudboom-echo-3"},
+  "Nike|Pegasus Trail 5": {w:0.8, t:2.2, aw:0.9, at:1.9, f:1.07, src:"https://runrepeat.com/nike-pegasus-trail-5"},
+  "Nike|Wildhorse 10": {w:1.3, t:1.6, aw:0.9, at:1.9, f:0.88, src:"https://runrepeat.com/nike-wildhorse-10"},
+  "Salomon|XA Pro 3D V9": {w:0.8, t:3.0, aw:0.9, at:1.9, f:1.17, src:"https://runrepeat.com/salomon-xa-pro-3d-v9"},
+  "Adidas|Terrex Agravic 4": {w:0.5, t:1.7, aw:0.9, at:1.9, f:1.13, src:"https://runrepeat.com/adidas-terrex-agravic-4"},
+  "Brooks|Caldera 8": {w:1.0, t:1.9, aw:0.9, at:1.9, f:0.97, src:"https://runrepeat.com/brooks-caldera-8"},
+  "Merrell|Agility Peak 6": {w:0.6, t:2.0, aw:0.9, at:1.9, f:1.13, src:"https://runrepeat.com/merrell-agility-peak-6"},
+  "Salomon|Speedcross 6": {w:1.2, t:1.9, aw:0.9, at:1.9, f:0.93, src:"https://runrepeat.com/salomon-speedcross-6"}
+};
+function lifeAdj(s){ return LIFE_ADJ[s.brand+'|'+s.name]||null; }
+function lifeKm(s){ var a=lifeAdj(s), base=LIFE[s.cat].km; return a ? Math.round(base*a.f/10)*10 : base; }
+function perKm(s){ return s.nok / lifeKm(s); }
 function kr(n,d){ return n.toLocaleString("nb-NO",{minimumFractionDigits:d,maximumFractionDigits:d}); }
 
 

@@ -50,4 +50,4 @@ automatisk av GitHub Pages fra `main` til https://kmpris.no.
 
 - Ikke endre tekst, design, kategorier eller levetider. Bare priser og dato.
 - Ikke legg til sko utenom leserforslag (steg 3b), og ikke fjern sko. Foreslå det heller i rapporten.
-- Ikke rør `CNAME`.
+- Ikke rør `CNAME` eller `LIFE_ADJ` (levetidsjusteringene i `data.js`). Nye lab-justeringer legges inn manuelt.

@@ -32,7 +32,7 @@ function row(s, opts){
   var grid='background-size:'+(axisStep()/AX*100)+'% 100%';
   return '<'+tag+' class="lrow'+(opts.current?' me':'')+(opts.dim?' dim':'')+'"'+href+' style="--cat:'+c.color+'" aria-label="'+esc(s.brand+' '+s.name+', '+GLABEL[s.g]+', '+kr(v,2)+' kroner per kilometer, '+kr(s.nok,0)+' kroner')+'">'+
     '<span class="r-pl">'+(opts.rank||'')+'</span>'+
-    '<span class="r-name"><b>'+esc(s.name)+'</b><span class="g">'+esc(s.brand)+', '+GLABEL[s.g].toLowerCase()+'</span></span>'+
+    '<span class="r-name"><b>'+esc(s.name)+'</b><span class="g">'+esc(s.brand)+', '+GLABEL[s.g].toLowerCase()+' · '+lifeKm(s)+' km'+(lifeAdj(s)?' <span class="adj" title="Levetid justert etter lab-test av yttersålen">lab</span>':'')+'</span></span>'+
     '<span class="r-cat"><i class="sw" style="background:'+c.color+'"></i>'+(s.cat==='stabil'?'Stabilitet':c.label)+'</span>'+
     '<span class="r-price">'+(s.approx?'ca. ':'')+kr(s.nok,0)+' kr</span>'+
     '<span class="track" style="'+grid+'"><span class="stem" style="width:'+start+'%" data-x="'+x+'"></span>'+
@@ -99,7 +99,7 @@ function home(){
      seg('sort','Sortering',[['km','Billigst per km'],['pris','Lavest pris']])+
      '</div>';
   h+='<div id="ladder">'+ladderHtml()+'</div>';
-  h+='<div class="legend"><span><i class="lg-dot"></i>Egen side hos KmPris</span><span><i class="lg-ring"></i>Lenker til Prisjakt</span>'+
+  h+='<div class="legend"><span><i class="lg-dot"></i>Egen side hos KmPris</span><span><i class="lg-ring"></i>Lenker til Prisjakt</span><span><span class="adj">lab</span> Levetid justert etter lab-test</span>'+
      Object.keys(CAT).map(function(k){return '<span><i class="sw" style="background:'+CAT[k].color+'"></i>'+CAT[k].label+'</span>';}).join('')+'</div>';
   h+='<p class="small" style="margin-top:12px">Prisen er laveste pris på '+PRICES_SOURCE.name+' '+PRICES_SOURCE.date+', som ofte gjelder tilbud i enkelte størrelser. Li-Ning finnes ikke på Prisjakt, så de prisene er omregnet fra euro med Norges Banks kurs '+SITE.eurNok.rate+' (sjekket 27.09.2026). Vanntette (GTX), piggede og barnemodeller er ikke med. Kjønnsfilteret viser også unisexmodeller.</p>';
   h+='</main>';
@@ -107,8 +107,9 @@ function home(){
      '<div class="stack"><h2>Slik regner vi</h2>'+
      '<p class="formula">Pris delt på antall kilometer skoen holder.</p>'+
      '<p>En konkurransesko til 2 000 kr som holder 300 km, koster 6,67 kr per km. En treningssko til 1 600 kr som holder 650 km, koster 2,46 kr per km. Den dyreste prislappen er ikke alltid den dyreste skoen, og omvendt.</p>'+
-     '<p class="small">Levetiden ligger omtrent midt i publiserte tommelfingerregler for hver skotype. Den er ikke målt på hver modell. Vekt, underlag og løpsstil gir store utslag. Skotypen er vår egen vurdering av hva modellen er laget for. Kilder: '+LIFE_SOURCES.map(function(s){return '<a href="'+s[1]+'">'+esc(s[0])+'</a>';}).join(', ')+'.</p></div>'+
-     '<table class="life"><thead><tr><th>Skotype</th><th>Kildenes spenn</th><th style="text-align:right">Vi bruker</th></tr></thead><tbody>'+
+     '<p><b>Justert per sko der vi har målinger.</b> For '+Object.keys(LIFE_ADJ).length+' modeller har uavhengige lab-tester (RunRepeat) målt hvor tykk yttersålen er og hvor mye den slites i en standard slipetest. Tykk og slitesterk gummi gir lengre levetid enn standarden, tynn eller myk gummi kortere, med maks 25 % opp eller ned. Disse er merket «lab» i lista. De andre får standardtallet for skotypen.</p>'+
+     '<p class="small">Standardlevetiden ligger omtrent midt i publiserte tommelfingerregler for hver skotype. Lab-testene måler yttersålen, ikke hvor fort dempingen blir flat, så også de justerte tallene er anslag. Vekt, underlag og løpsstil gir store utslag. Skotypen er vår egen vurdering av hva modellen er laget for. Kilder: '+LIFE_SOURCES.map(function(s){return '<a href="'+s[1]+'">'+esc(s[0])+'</a>';}).join(', ')+'.</p></div>'+
+     '<table class="life"><thead><tr><th>Skotype</th><th>Kildenes spenn</th><th style="text-align:right">Standard</th></tr></thead><tbody>'+
      Object.keys(LIFE).map(function(k){var l=LIFE[k];return '<tr><td>'+esc(l.label)+'</td><td class="muted">'+esc(l.range)+'</td><td class="n">'+l.km+' km</td></tr>';}).join('')+
      '</tbody></table></div></div></section>';
   return h;
@@ -167,7 +168,7 @@ function modelPage(m){
      '<span class="brandline"><i class="sw" style="background:'+c.color+'"></i>'+LIFE[p.cat].label+' fra '+esc(brandName(m.brand))+'</span>'+
      '<h1>'+esc(m.name)+'</h1>'+
      '<p class="muted">'+rows.map(function(s){return GLABEL[s.g]+' '+(s.approx?'ca. ':'')+kr(s.nok,0)+' kr';}).join(', ')+'. '+esc(m.priceSrc)+'.</p></div>'+
-     '<div class="bib big-km"><div class="bib-top"><span>KmPris</span><span>'+(rows.length>1?GLABEL[p.g]:'')+'</span></div><div class="bib-num">'+kr(v,2)+'<small>kr/km</small></div><p class="bib-foot">Plass '+rank+' av '+groupList.length+' blant '+c.many+', regnet med '+LIFE[p.cat].km+' km levetid.</p></div></div>';
+     '<div class="bib big-km"><div class="bib-top"><span>KmPris</span><span>'+(rows.length>1?GLABEL[p.g]:'')+'</span></div><div class="bib-num">'+kr(v,2)+'<small>kr/km</small></div><p class="bib-foot">Plass '+rank+' av '+groupList.length+' blant '+c.many+', regnet med '+lifeKm(p)+' km levetid'+(lifeAdj(p)?' (standard '+LIFE[p.cat].km+' km, justert etter <a href="'+lifeAdj(p).src+'">lab-test av yttersålen</a>)':'')+'.</p></div></div>';
   var top=peersFor(p,8); setAxis(top.concat(rows));
   h+='<div class="block" style="margin-top:28px"><h3>Slik står den seg mot de billigste '+c.many+'</h3><div class="ladder">'+axisRow()+
      top.concat(rows).sort(function(a,b){return perKm(a)-perKm(b);}).map(function(o){return row(o,{current:o.detail===m.id,dim:o.detail!==m.id,rank:groupList.indexOf(o)+1});}).join('')+'</div>'+
@@ -183,7 +184,7 @@ function modelPage(m){
      '<div class="calc"><h3>Regn selv</h3><p class="small" style="color:var(--ink-2)">Endre pris eller levetid. Maks pris er det skoen kan koste og fortsatt være billigere per kilometer enn skoen i samme rad.</p>'+
        '<div class="calc-inputs">'+
          '<label for="calc-pris">Pris i kr<input id="calc-pris" type="number" min="1" step="1" inputmode="numeric" value="'+p.nok+'"></label>'+
-         '<label for="calc-km">Levetid i km<input id="calc-km" type="number" min="1" step="10" inputmode="numeric" value="'+LIFE[p.cat].km+'"></label>'+
+         '<label for="calc-km">Levetid i km<input id="calc-km" type="number" min="1" step="10" inputmode="numeric" value="'+lifeKm(p)+'"></label>'+
          '<label for="ukekm">Km i uka<input id="ukekm" type="number" min="1" max="300" inputmode="numeric" value="30"></label>'+
        '</div>'+
        '<div class="calc-result"><b id="calc-perkm"></b><p class="small" id="calc-weeks" style="margin-top:6px"></p></div>'+
