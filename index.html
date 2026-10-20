@@ -885,7 +885,7 @@ function seg(name, label, items){
     return '<button type="button" id="'+name+'-'+it[0]+'" data-'+name+'="'+it[0]+'" aria-pressed="'+(state[name]===it[0])+'">'+it[1]+'</button>';
   }).join('')+'</div>';
 }
-var FORMSPREE_ID=''; // settes når Formspree-skjemaet er laget
+var FORMSPREE_ID='myekavvb'; // settes når Formspree-skjemaet er laget
 function nextMonday(){var d=new Date();var add=(8-d.getDay())%7||7;d.setDate(d.getDate()+add);return d.toLocaleDateString('nb-NO',{weekday:'long',day:'numeric',month:'long'});}
 function suggestHtml(none){
   if(!FORMSPREE_ID||!state.q.trim())return '';
