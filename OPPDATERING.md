@@ -17,6 +17,7 @@ automatisk av GitHub Pages fra `main` til https://kmpris.no.
   Avbryter uten å endre noe (kode 2) hvis over 20 % av radene mangler pris.
 - `verktoy/bygg.py`: bygger `index.html` uten å endre priser.
 - `verktoy/legg_til.py "Merke" "Modell" <kategori> <H|D|U> <pris> <prisjaktId>`: legger til én ny sko-rad.
+- `sammenlign/index.html`: sammenligning av 2–5 sko, bygget av `verktoy/sider.js` fra `kilde/sammenlign.html`.
 - `min-skopark/index.html`: Min skopark, bygget av `verktoy/sider.js` fra `kilde/skopark.html`. Lagrer bare i leserens nettleser.
 - `logg/levetid.csv`: anonyme levetider fra lesere som pensjonerer sko i Min skopark.
 - `logg/forslag.md`: forslag fra leserne som er behandlet (ett per linje med dato og utfall).
@@ -53,7 +54,7 @@ automatisk av GitHub Pages fra `main` til https://kmpris.no.
    Ta med i rapporten hvor mange nye innsendinger som kom, og samlet antall per modell når en modell har minst 5.
 4. `python3 verktoy/oppdater.py logg/priser-ÅÅÅÅ-MM-DD.json`. Ved kode 2: ikke publiser, meld fra.
 5. `pip install playwright` hvis den mangler, deretter `python3 verktoy/sjekk.py`. Hvis ikke `OK`: `git checkout -- kilde index.html`, ikke publiser, meld fra med feilene.
-6. Commit `kilde/data.js`, `index.html`, `sko/`, `min-skopark/`, `assets/`, `sitemap.xml` og `logg/` med meldingen `Prisoppdatering ÅÅÅÅ-MM-DD` og push til `main`.
+6. Commit `kilde/data.js`, `index.html`, `sko/`, `min-skopark/`, `sammenlign/`, `assets/`, `sitemap.xml` og `logg/` med meldingen `Prisoppdatering ÅÅÅÅ-MM-DD` og push til `main`.
 7. Send Tore en kort rapport på norsk: antall endrede priser, de 5 største endringene,
    hva som ble holdt tilbake og hvorfor, hvilke leserforslag som ble lagt til eller avvist,
    og om billigste sko per kategori har endret seg.
