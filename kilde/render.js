@@ -358,9 +358,9 @@ function aboutPage(){
   return '<main class="wrap"><div class="intro"><h1>Om KmPris</h1>'+
   '<p class="lede">KmPris rangerer løpesko etter det som betyr noe for lommeboka: hva skoen koster per kilometer. Både kjente merker og nye merker som få i Norge har prøvd.</p></div>'+
   '<div class="block" style="margin-top:12px"><h2>Hvem står bak</h2>'+
-  '<p>Jeg heter Tore og bor i Telemark. Jeg løper som amatør, både på asfalt og i terrenget, og har som mange andre fått litt oppheng i løpesko. Forskjellen gode sko gjør, merkes. Det gjør prislappen også.</p>'+
-  '<p style="margin-top:12px">Derfor begynte jeg å lete etter kupp: sko som gir mye løping for pengene. Det er det kilometerprisen måler. Underveis så jeg hvor mye spennende som kommer fra Østen. Merker som Li-Ning og Xtep er nesten ukjente i Norge, men mange av skoene deres står ikke tilbake for de kjente merkene når det kommer til kvalitet.</p>'+
-  '<p style="margin-top:12px">KmPris er et hobbyprosjekt jeg driver på fritiden. Har du tips, ser du en feil eller savner du en sko, skriv til <a href="mailto:post@kmpris.no">post@kmpris.no</a>.</p></div>'+
+  '<p>Jeg heter Tore, bor i Telemark og løper på hobbybasis, både på asfalt og i terrenget. Som mange andre løpere har jeg blitt ganske opptatt av sko. Gode sko merkes på beina, men de merkes også på kontoen.</p>'+
+  '<p style="margin-top:12px">KmPris startet med et enkelt spørsmål: hvilke sko gir mest løping for pengene? Prislappen alene svarer ikke på det, så jeg begynte å regne pris per kilometer i stedet. Underveis oppdaget jeg hvor mye spennende som kommer fra Asia. Merker som Li-Ning og Xtep er lite kjent i Norge, men flere av modellene deres tåler fint en sammenligning med de etablerte merkene.</p>'+
+  '<p style="margin-top:12px">Jeg er verken skoforhandler eller profesjonell tester. Tallene bygger på offentlige priser, uavhengige tester og en åpen metode, så du selv kan sjekke hvordan jeg har regnet. Ser du en feil, eller savner du en sko? Skriv til <a href="mailto:post@kmpris.no">post@kmpris.no</a>.</p></div>'+
   '<div class="block"><h2>Slik lages innholdet</h2><ul class="plain">'+
   '<li>Rangeringen dekker '+MODEL_COUNT+' gjeldende modeller fra '+BRAND_LIST.length+' merker. Prisen er laveste pris på Prisjakt for herre- og damemodellen hver for seg.</li>'+
   '<li>Kilometerprisen er pris delt på anslått levetid for skotypen. <a href="#metode">Se metoden</a>.</li>'+
