@@ -33,10 +33,10 @@
 <div class="calc-inputs"><label for="cp">Pris i kr<input id="cp" type="number" min="1" inputmode="numeric" value="935"></label>
 <label for="ck">Levetid i km<input id="ck" type="number" min="1" step="10" inputmode="numeric" value="640"></label></div>
 <p class="calc-result"><b id="cr">1,46<small> kr/km</small></b></p>
-<p class="small" id="cm">Midten av terrengskoene ligger på 2,67 kr/km.</p></div>
+<p class="small" id="cm">Midten av terrengskoene ligger på 2,60 kr/km.</p></div>
 <div class="stack"><h3>Billigere per km blant terrengskoene</h3><table class="res"><thead><tr><th>Sko</th><th class="n">Pris</th><th class="n">kr/km</th></tr></thead><tbody><tr><td><a href="/sko/nike-pegasus-trail-5/">Nike Pegasus Trail 5</a><br><span class="small">Dame · 590 km</span></td><td class="n">800</td><td class="n"><b>1,36</b></td></tr></tbody></table><p class="small"><a href="/#skoene">Se hele rangeringen</a></p></div>
 </aside></div></main>
-<script>(function(){var p=document.getElementById('cp'),k=document.getElementById('ck'),r=document.getElementById('cr'),m=document.getElementById('cm'),med=2.6709;
+<script>(function(){var p=document.getElementById('cp'),k=document.getElementById('ck'),r=document.getElementById('cr'),m=document.getElementById('cm'),med=2.5982;
 function u(){var v=(+p.value)/(+k.value);if(!isFinite(v)||v<=0){r.innerHTML='–';return;}r.innerHTML=v.toLocaleString('nb-NO',{minimumFractionDigits:2,maximumFractionDigits:2})+'<small> kr/km</small>';
 m.textContent=(v<=med?'Billigere':'Dyrere')+' enn midten av terrengskoene ('+med.toLocaleString('nb-NO',{minimumFractionDigits:2,maximumFractionDigits:2})+' kr/km).';}
 p.addEventListener('input',u);k.addEventListener('input',u);})();</script>
