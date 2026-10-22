@@ -1,0 +1,88 @@
+<main class="wrap cmp">
+<div class="intro" style="margin-top:40px"><h1>Sammenlign sko</h1>
+<p class="lede">Velg 2 til 5 sko og se dem side om side: pris, levetid, pris per kilometer og hva det koster å løpe 1 000 km i hver av dem.</p></div>
+
+<form id="c-form" class="qform" autocomplete="off" style="max-width:640px">
+<label for="c-add" class="sr">Legg til sko</label>
+<input id="c-add" class="field-input" list="c-models" placeholder="Skriv modellnavn, f.eks. Novablast">
+<datalist id="c-models"></datalist>
+<button type="submit" class="btn">Legg til</button></form>
+<p class="small" id="c-msg" aria-live="polite" style="margin-top:8px"></p>
+<div class="c-chips" id="c-chips"></div>
+
+<div id="c-out"></div>
+
+<div class="fit" style="margin-top:32px"><b>Husk passformen.</b> Den billigste skoen per kilometer er bare et kupp hvis den passer foten din. Bruk sammenligningen blant sko du allerede vet passer. <a href="/#velg">Slik velger du riktig sko</a>.</div>
+</main>
+
+<style>
+.c-chips{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 28px}
+.c-chip{display:inline-flex;align-items:center;gap:6px;background:var(--bib);border:1px solid var(--ink);border-radius:999px;padding:6px 8px 6px 14px;font-size:15px;font-weight:600}
+.c-chip button{border:0;background:var(--field);border-radius:50%;width:24px;height:24px;cursor:pointer;font-size:15px;line-height:1;color:var(--ink)}
+.c-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border:2px solid var(--ink);border-radius:6px;background:var(--bib)}
+table.cmp-t{border-collapse:separate;border-spacing:0;width:100%;font-size:15px}
+table.cmp-t td,table.cmp-t thead th:not(:first-child){min-width:150px}
+table.cmp-t tbody th,table.cmp-t thead th:first-child{position:sticky;left:0;background:var(--bib);z-index:1;box-shadow:1px 0 0 var(--line)}
+table.cmp-t th,table.cmp-t td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+table.cmp-t thead th{border-bottom:2px solid var(--ink);vertical-align:bottom}
+table.cmp-t thead th a{font-size:17px;text-decoration:none}table.cmp-t thead th a:hover{text-decoration:underline}
+table.cmp-t thead th .b{display:block;font-size:13px;font-weight:500;color:var(--muted)}
+table.cmp-t tbody th{font-weight:600;color:var(--ink-2);white-space:nowrap;width:1%}
+table.cmp-t td.best{background:color-mix(in srgb,var(--good) 12%,transparent)}
+table.cmp-t td.best b,table.cmp-t td b.big{font-family:var(--display);font-weight:900;font-size:26px}
+table.cmp-t td.best b{color:var(--good)}
+table.cmp-t td .s{display:block;font-size:13px;color:var(--muted)}
+table.cmp-t tr.hl td b{font-family:var(--display);font-weight:900;font-size:30px}
+@media (max-width:600px){table.cmp-t tbody th{white-space:normal;font-size:13px;padding:10px 8px;max-width:84px}table.cmp-t td,table.cmp-t thead th:not(:first-child){min-width:132px;padding:10px}}
+.c-empty{border:2px dashed var(--line);border-radius:6px;padding:22px;color:var(--muted)}
+.c-share{margin-top:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.c-share button{font:inherit;font-size:14px;font-weight:600;border:1px solid var(--ink);background:var(--bib);color:var(--ink);border-radius:4px;padding:8px 12px;cursor:pointer}
+</style>
+
+<script>
+(function(){
+var ALL=window.KM_CMP||[], MAX=5, by={}; ALL.forEach(function(m){by[m.slug]=m;});
+function $(id){return document.getElementById(id);}
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function kr(n,d){return Number(n).toLocaleString('nb-NO',{minimumFractionDigits:d,maximumFractionDigits:d});}
+$('c-models').innerHTML=ALL.map(function(m){return '<option value="'+esc(m.label)+'">';}).join('');
+var sel=(new URLSearchParams(location.search).get('sko')||'').split(',').filter(function(s){return by[s];}).slice(0,MAX);
+function setUrl(){ var u=location.pathname+(sel.length?'?sko='+sel.join(','):''); history.replaceState(null,'',u); }
+function find(v){ v=(v||'').trim().toLowerCase(); if(!v)return null; for(var i=0;i<ALL.length;i++){ if(ALL[i].label.toLowerCase()===v)return ALL[i]; }
+  var hits=ALL.filter(function(m){return m.label.toLowerCase().indexOf(v)>-1;}); return hits.length===1?hits[0]:null; }
+$('c-form').addEventListener('submit',function(e){ e.preventDefault(); var m=find($('c-add').value);
+  if(!m){ $('c-msg').textContent='Fant ikke skoen. Velg et navn fra lista som dukker opp mens du skriver.'; return; }
+  if(sel.indexOf(m.slug)>-1){ $('c-msg').textContent=m.label+' er allerede med.'; return; }
+  if(sel.length>=MAX){ $('c-msg').textContent='Du kan sammenligne maks '+MAX+' sko. Fjern en først.'; return; }
+  sel.push(m.slug); $('c-add').value=''; $('c-msg').textContent=''; draw(); });
+document.addEventListener('click',function(e){ var b=e.target.closest('[data-rm]'); if(b){ sel=sel.filter(function(s){return s!==b.dataset.rm;}); draw(); }
+  var c=e.target.closest('#c-copy'); if(c){ var url=location.href; (navigator.clipboard?navigator.clipboard.writeText(url):Promise.reject()).then(function(){c.textContent='Lenke kopiert';},function(){c.textContent=url;}); } });
+function draw(){
+  setUrl();
+  $('c-chips').innerHTML=sel.map(function(s){return '<span class="c-chip">'+esc(by[s].label)+'<button type="button" data-rm="'+s+'" aria-label="Fjern '+esc(by[s].label)+'">×</button></span>';}).join('');
+  var ms=sel.map(function(s){return by[s];});
+  if(ms.length<2){ $('c-out').innerHTML='<p class="c-empty">'+(ms.length?'Legg til minst én sko til.':'Legg til sko i feltet over. Du kan også gå til en skoside og trykke «Sammenlign».')+'</p>'; return; }
+  function minIdx(vals){ var best=Infinity; vals.forEach(function(v){ if(v!=null&&v<best)best=v; }); return best; }
+  function maxIdx(vals){ var best=-Infinity; vals.forEach(function(v){ if(v!=null&&v>best)best=v; }); return best; }
+  var price=ms.map(function(m){return m.price;}), life=ms.map(function(m){return m.life;}), pk=ms.map(function(m){return m.perKm;});
+  var bp=minIdx(price), bl=maxIdx(life), bk=minIdx(pk);
+  function cell(v,isBest,html){ return '<td'+(isBest&&ms.length>1?' class="best"':'')+'>'+html+'</td>'; }
+  var rows=[
+    ['Kategori', ms.map(function(m){return '<td>'+esc(m.cat)+'<span class="s">Plass '+m.rank+' av '+m.of+'</span></td>';})],
+    ['Laveste pris', ms.map(function(m){return cell(m.price,m.price===bp,'<b class="big">'+(m.approx?'ca. ':'')+kr(m.price,0)+'</b> kr'+(m.variants.length>1?'<span class="s">'+m.variants.map(function(v){return esc(v.g)+' '+kr(v.nok,0);}).join(' · ')+'</span>':'<span class="s">'+esc(m.variants[0].g)+'</span>'));})],
+    ['Levetid', ms.map(function(m){return cell(m.life,m.life===bl,'<b class="big">'+kr(m.life,0)+'</b> km<span class="s">'+(m.adj?'Justert etter lab-test':'Standard for kategorien')+'</span>');})],
+    ['Pris per km', ms.map(function(m){return cell(m.perKm,m.perKm===bk,'<b>'+kr(m.perKm,2)+'</b> kr');}), 'hl'],
+    ['1 000 km koster', ms.map(function(m){return cell(m.perKm,m.perKm===bk,'<b class="big">'+kr(Math.round(m.perKm*1000/10)*10,0)+'</b> kr<span class="s">'+kr(1000/m.life,1)+' par</span>');})],
+    ['Yttersåle (lab)', ms.map(function(m){return '<td>'+(m.adj?kr(m.adj.t,1)+' mm tykk, '+kr(m.adj.w,1)+' mm slitasje<span class="s">Snitt '+kr(m.adj.at,1)+' / '+kr(m.adj.aw,1)+' mm. <a href="'+esc(m.adj.src)+'">Kilde</a></span>':'<span class="s">Ikke målt</span>')+'</td>';})],
+    ['Se priser', ms.map(function(m){return '<td><a href="/sko/'+m.slug+'/">Skoside</a> · <a href="'+esc(m.pj)+'" rel="nofollow">Prisjakt ↗</a></td>';})]
+  ];
+  var h='<div class="c-scroll"><table class="cmp-t"><thead><tr><th></th>'+ms.map(function(m){return '<th><a href="/sko/'+m.slug+'/">'+esc(m.name)+'</a><span class="b">'+esc(m.brand)+'</span></th>';}).join('')+'</tr></thead><tbody>'+
+    rows.map(function(r){return '<tr'+(r[2]?' class="'+r[2]+'"':'')+'><th scope="row">'+r[0]+'</th>'+r[1].join('')+'</tr>';}).join('')+'</tbody></table></div>';
+  var cats={}; ms.forEach(function(m){cats[m.cat]=1;});
+  if(Object.keys(cats).length>1) h+='<p class="small" style="margin-top:10px">Skoene er i ulike kategorier. En konkurransesko og en treningssko er laget for ulike ting, så pris per km sier mest når du sammenligner sko av samme type.</p>';
+  h+='<div class="c-share"><button type="button" id="c-copy">Kopier lenke til sammenligningen</button><span class="small">Grønt markerer det beste i hver rad. Prisene er laveste pris for billigste variant.</span></div>';
+  $('c-out').innerHTML=h;
+}
+draw();
+})();
+</script>

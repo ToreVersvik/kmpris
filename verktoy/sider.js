@@ -70,7 +70,7 @@ function page({ title, desc, url, body, img, nav }) {
 <meta property="og:image" content="${BASE}/assets/og/${img || 'kmpris'}.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="${iconHref}"><link rel="stylesheet" href="/assets/kmpris.css"></head><body>
 <header class="site-head"><div class="wrap"><a class="logo" href="/" aria-label="KmPris, til forsiden"><span class="km">Km</span>Pris</a>
-<nav class="main" aria-label="Hovedmeny"><a href="/#skoene"${nav === 'skoene' ? ' aria-current="page"' : ''}>Rangering</a><a href="/#velg">Velg sko</a><a href="/min-skopark/"${nav === 'skopark' ? ' aria-current="page"' : ''}>Min skopark</a><a href="/#kjop">Butikker</a><a href="/#om">Om KmPris</a></nav></div></header>
+<nav class="main" aria-label="Hovedmeny"><a href="/#skoene"${nav === 'skoene' ? ' aria-current="page"' : ''}>Rangering</a><a href="/#velg">Velg sko</a><a href="/sammenlign/"${nav === 'cmp' ? ' aria-current="page"' : ''}>Sammenlign</a><a href="/min-skopark/"${nav === 'skopark' ? ' aria-current="page"' : ''}>Min skopark</a><a href="/#kjop">Butikker</a><a href="/#om">Om KmPris</a></nav></div></header>
 ${body}
 <footer><div class="wrap"><span>KmPris (Kilometerpris) er uavhengig og ikke tilknyttet merkene, distributørene eller butikkene som nevnes. Siden tjener ingen provisjon i dag. Hvis det endrer seg, merkes lenkene tydelig.</span>
 <span>Laget av Tore i Telemark. <a href="/#personvern">Personvern</a> · <a href="/#om">Om KmPris</a> · <a href="mailto:post@kmpris.no">post@kmpris.no</a></span>
@@ -146,6 +146,7 @@ ${richHtml}
 </div>
 <aside class="m-side">
 <div class="fit"><b>Prøv før du kjøper.</b> En sko som ikke passer, er aldri billig, uansett pris per kilometer. Prøv den i butikk eller kjøp der det er enkelt å returnere. <a href="/#velg">Slik velger du riktig sko</a> · <a href="/#storrelse">Finn riktig størrelse</a>.</div>
+<p class="small"><a href="/sammenlign/?sko=${m.slug}"><b>Sammenlign med andre sko</b></a></p>
 <p class="small"><b>Har du denne skoen?</b> <a href="/min-skopark/?legg=${m.slug}">Legg den i Min skopark</a> og følg med på hva den faktisk koster deg per km.</p>
 <div class="calc"><h3>Regn selv</h3><p class="small">Fant du et annet tilbud, eller tror du skoen varer lenger for deg?</p>
 <div class="calc-inputs"><label for="cp">Pris i kr<input id="cp" type="number" min="1" inputmode="numeric" value="${best.nok}"></label>
@@ -166,6 +167,23 @@ p.addEventListener('input',u);k.addEventListener('input',u);})();</script>`;
   urls.push(url); count++;
 }
 
+// --- Sammenlign ---
+{
+  const list = [...models.values()].map(m => {
+    const rows = m.rows.slice().sort((a, b) => perKm(a) - perKm(b)); const best = rows[0]; const g = group(best.cat);
+    const a = lifeAdj(best);
+    return { slug: m.slug, label: m.brand + ' ' + m.name, brand: m.brand, name: m.name, cat: CAT[g].label,
+      rank: byGroup[g].indexOf(best) + 1, of: byGroup[g].length, price: best.nok, approx: !!best.approx,
+      variants: rows.map(r => ({ g: GLABEL[r.g], nok: r.nok })), life: lifeKm(best), perKm: +perKm(best).toFixed(4),
+      adj: a ? { w: a.w, t: a.t, aw: a.aw, at: a.at, src: a.src } : null, pj: pjUrl(best) };
+  }).sort((a, b) => a.label.localeCompare(b.label, 'nb'));
+  const body = `<script>window.KM_CMP=${JSON.stringify(list).replace(/</g, '\\u003c')};</script>\n` + src('sammenlign.html');
+  fs.mkdirSync(path.join(root, 'sammenlign'), { recursive: true });
+  fs.writeFileSync(path.join(root, 'sammenlign', 'index.html'), page({ title: 'Sammenlign løpesko: pris, levetid og pris per km | KmPris',
+    desc: 'Sammenlign 2 til 5 løpesko side om side: laveste pris, levetid, pris per kilometer og hva 1 000 km koster i hver sko.',
+    url: BASE + '/sammenlign/', body, nav: 'cmp' }));
+  urls.push(BASE + '/sammenlign/');
+}
 // --- Min skopark ---
 {
   const list = [...models.values()].map(m => { const r = m.rows.slice().sort((a, b) => a.nok - b.nok)[0]; const g = group(r.cat);
