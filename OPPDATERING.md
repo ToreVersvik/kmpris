@@ -9,6 +9,7 @@ automatisk av GitHub Pages fra `main` til https://kmpris.no.
 - `index.html`: ferdig bygget forside og rangering. Lages av verktøyene, skal aldri redigeres for hånd.
 - `sko/<slug>/index.html`: én statisk side per skomodell, `assets/kmpris.css`, `sitemap.xml` og `robots.txt`.
   Lages av `verktoy/sider.js` (kjøres automatisk av bygg.py og oppdater.py). Ikke rediger for hånd.
+- `assets/og/*.png`: delingsbilder, lages av `verktoy/bilder.py` bare når de mangler (nye sko får bilde automatisk).
 - `kilde/tester.json`: ekstra testlenker per modell, `{"Merke|Modell": [["Tittel", "url"], ...]}`. Vedlikeholdes manuelt.
 - `verktoy/idliste.py`: lister Prisjakt-id-ene som skal sjekkes.
 - `verktoy/oppdater.py <prisfil.json>`: legger inn nye priser, setter dato og bygger `index.html`.
@@ -44,7 +45,7 @@ automatisk av GitHub Pages fra `main` til https://kmpris.no.
    - Skriv én linje per forslag i `logg/forslag.md`: `- ÅÅÅÅ-MM-DD «forslag»: lagt til som Merke Modell (H/D), kategori` eller `… ikke lagt til: grunn`.
 4. `python3 verktoy/oppdater.py logg/priser-ÅÅÅÅ-MM-DD.json`. Ved kode 2: ikke publiser, meld fra.
 5. `pip install playwright` hvis den mangler, deretter `python3 verktoy/sjekk.py`. Hvis ikke `OK`: `git checkout -- kilde index.html`, ikke publiser, meld fra med feilene.
-6. Commit `kilde/data.js`, `index.html`, `sko/`, `sitemap.xml` og `logg/` med meldingen `Prisoppdatering ÅÅÅÅ-MM-DD` og push til `main`.
+6. Commit `kilde/data.js`, `index.html`, `sko/`, `assets/`, `sitemap.xml` og `logg/` med meldingen `Prisoppdatering ÅÅÅÅ-MM-DD` og push til `main`.
 7. Send Tore en kort rapport på norsk: antall endrede priser, de 5 største endringene,
    hva som ble holdt tilbake og hvorfor, hvilke leserforslag som ble lagt til eller avvist,
    og om billigste sko per kategori har endret seg.

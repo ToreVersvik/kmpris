@@ -55,6 +55,7 @@ html = ('<!doctype html><html lang="no"><meta charset="utf-8">'
 open(os.path.join(root, 'index.html'), 'w', encoding='utf-8').write(html)
 import subprocess
 subprocess.run(['node', os.path.join(root, 'verktoy', 'sider.js')], check=True)
+subprocess.run([sys.executable, os.path.join(root, 'verktoy', 'bilder.py')], check=True)
 
 lines = [f'# Prisoppdatering {today}', '',
          f'- Rader med ny pris: {len(changed)}', f'- Uendret: {same}',

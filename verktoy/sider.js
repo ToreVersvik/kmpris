@@ -52,16 +52,21 @@ for (const s of SHOES) {
   if (!models.has(k)) models.set(k, { key: k, brand: s.brand, name: s.name, slug: slugOf(s), rows: [] });
   models.get(k).rows.push(s);
 }
+if (process.argv.includes('--liste')) {
+  console.log(JSON.stringify([...models.values()].map(m => { const g = group(m.rows[0].cat); return { slug: m.slug, name: m.name, brand: m.brand, g, cat: CAT[g].label + 'sko' }; })));
+  process.exit(0);
+}
 const byGroup = {};
 for (const s of SHOES) (byGroup[group(s.cat)] = byGroup[group(s.cat)] || []).push(s);
 for (const g in byGroup) byGroup[g].sort((a, b) => perKm(a) - perKm(b));
 const median = arr => { const v = arr.map(perKm).sort((a, b) => a - b); return v[Math.floor(v.length / 2)]; };
 
-function page({ title, desc, url, body }) {
+function page({ title, desc, url, body, img }) {
   return `<!doctype html><html lang="no"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${esc(title)}</title><meta name="description" content="${esc(desc)}"><link rel="canonical" href="${url}">
 <meta name="theme-color" content="#16201B"><meta property="og:type" content="article"><meta property="og:site_name" content="KmPris">
 <meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(desc)}"><meta property="og:url" content="${url}"><meta property="og:locale" content="nb_NO">
+<meta property="og:image" content="${BASE}/assets/og/${img || 'kmpris'}.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="${iconHref}"><link rel="stylesheet" href="/assets/kmpris.css"></head><body>
 <header class="site-head"><div class="wrap"><a class="logo" href="/" aria-label="KmPris, til forsiden"><span class="km">Km</span>Pris</a>
 <nav class="main" aria-label="Hovedmeny"><a href="/#skoene" aria-current="page">Rangering</a><a href="/#velg">Velg sko</a><a href="/#kjop">Butikker</a><a href="/#om">Om KmPris</a></nav></div></header>
@@ -153,7 +158,7 @@ m.textContent=(v<=med?'Billigere':'Dyrere')+' enn midten av ${c.many} ('+med.toL
 p.addEventListener('input',u);k.addEventListener('input',u);})();</script>`;
 
   const desc = `${fullName} koster fra ${approx ? 'ca. ' : ''}${kr(minPrice, 0)} kr og ${kr(perKm(best), 2)} kr per kilometer med ${km} km levetid. Plass ${rank} av ${list.length} blant ${c.many}. Priser, levetid og tester.`;
-  const html = page({ title: `${fullName}: ${kr(perKm(best), 2)} kr per km | KmPris`, desc, url, body });
+  const html = page({ title: `${fullName}: ${kr(perKm(best), 2)} kr per km | KmPris`, desc, url, body, img: m.slug });
   fs.mkdirSync(path.join(root, 'sko', m.slug), { recursive: true });
   fs.writeFileSync(path.join(root, 'sko', m.slug, 'index.html'), html);
   urls.push(url); count++;
