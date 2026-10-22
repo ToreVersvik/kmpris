@@ -375,21 +375,23 @@ function aboutPage(){
 
 function privacyPage(){
   return '<main class="wrap"><div class="intro"><h1>Personvern</h1>'+
-  '<p class="lede">Kort fortalt: KmPris samler ikke inn opplysninger om deg, setter ingen informasjonskapsler og bruker ingen analyseverktøy.</p></div>'+
+  '<p class="lede">Kort fortalt: KmPris setter ingen informasjonskapsler, viser ingen annonser og samler ikke inn opplysninger som kan knyttes til deg.</p></div>'+
   '<div class="block" style="margin-top:12px"><h2>Hva siden gjør og ikke gjør</h2><ul class="plain">'+
-  '<li>Ingen informasjonskapsler (cookies), ingen sporing og ingen annonser.</li>'+
+  '<li>Ingen informasjonskapsler (cookies), ingen sporing på tvers av nettsteder og ingen annonser.</li>'+
   '<li>Søk, filtre, kalkulatoren og spørsmålene i «Velg sko» kjøres bare i nettleseren din. Ingenting av det sendes til oss.</li>'+
   '<li>Skrifttypene ligger på selve siden, så nettleseren din henter ingenting fra Google eller andre.</li>'+
   '<li>Det finnes ingen kontoer eller nyhetsbrev.</li></ul></div>'+
   (FORMSPREE_ID?'<div class="block"><h2>Forslag til nye sko</h2>'+
   '<p>Finner du ikke en modell, kan du foreslå den. Skjemaet sender bare modellnavnet du skriver. Innsendingen går via tjenesten Formspree (USA), som videresender den til oss på e-post og lagrer den i en begrenset periode. Formspree registrerer også teknisk informasjon som IP-adresse for å stoppe spam. Vi bruker forslaget bare til å vurdere om skoen skal inn i rangeringen.</p></div>':'')+
-  '<div class="block"><h2>Serverlogg hos webhotellet</h2>'+
-  '<p>Siden ligger hos Domene AS i Norge. Som alle webhotell fører de en teknisk logg over besøk: IP-adresse, tidspunkt, hvilken side som ble åpnet og hvilken nettleser som ble brukt. Loggen brukes til drift og sikkerhet, ikke til å kartlegge deg, og slettes etter webhotellets faste rutiner.</p></div>'+
+  '<div class="block"><h2>Besøksstatistikk</h2>'+
+  '<p>For å se hvor mange som bruker siden og hvilke sider som er mest lest, bruker KmPris GoatCounter. Den setter ingen informasjonskapsler, lagrer ikke IP-adressen din og følger deg ikke på andre nettsteder. Den registrerer hvilken side som ble åpnet, hvor du kom fra (for eksempel et Google-søk), omtrent hvilket land, og hvilken type nettleser og skjerm du bruker. Tallene brukes bare samlet, til å forbedre siden.</p></div>'+
+  '<div class="block"><h2>Drift</h2>'+
+  '<p>Siden publiseres via GitHub Pages. Som alle nettjenester fører GitHub en teknisk logg over besøk, blant annet IP-adresse, for drift og sikkerhet. Den brukes ikke av KmPris.</p></div>'+
   '<div class="block"><h2>Lenker til andre nettsteder</h2>'+
   '<p>Når du klikker deg videre til Prisjakt, en butikk eller et merke, er det deres personvernregler som gjelder der. Hvis KmPris senere tar i bruk annonselenker (provisjon ved kjøp), merkes lenkene tydelig og denne siden oppdateres før det skjer.</p></div>'+
   '<div class="block"><h2>Spørsmål og rettigheter</h2>'+
   '<p>Du kan spørre hva som er lagret om deg og be om at det slettes. Skriv til <a href="mailto:post@kmpris.no">post@kmpris.no</a>. Mener du at personopplysninger behandles feil, kan du klage til <a href="https://www.datatilsynet.no/">Datatilsynet</a>.</p>'+
-  '<p class="small" style="margin-top:14px">Sist oppdatert 20.10.2026.</p></div></main>';
+  '<p class="small" style="margin-top:14px">Sist oppdatert 22.10.2026.</p></div></main>';
 }
 
 function render(){
@@ -447,5 +449,6 @@ document.addEventListener('input',function(e){
 });
 document.getElementById('updated').textContent='Priser og forhandlere sist sjekket '+SITE.updated+'.';
 window.addEventListener('hashchange',render);
+window.addEventListener('hashchange',function(){ if(window.goatcounter&&window.goatcounter.count) window.goatcounter.count({path:location.pathname+location.hash}); });
 render();
 </script>

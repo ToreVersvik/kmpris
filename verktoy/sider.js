@@ -68,7 +68,8 @@ function page({ title, desc, url, body }) {
 ${body}
 <footer><div class="wrap"><span>KmPris (Kilometerpris) er uavhengig og ikke tilknyttet merkene, distributørene eller butikkene som nevnes. Siden tjener ingen provisjon i dag. Hvis det endrer seg, merkes lenkene tydelig.</span>
 <span>Laget av Tore i Telemark. <a href="/#personvern">Personvern</a> · <a href="/#om">Om KmPris</a> · <a href="mailto:post@kmpris.no">post@kmpris.no</a></span>
-<span>Priser sist sjekket ${esc(SITE.updated)}.</span></div></footer></body></html>`;
+<span>Priser sist sjekket ${esc(SITE.updated)}.</span></div></footer>
+<script data-goatcounter="https://kmpris.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script></body></html>`;
 }
 
 const urls = [BASE + '/'];
