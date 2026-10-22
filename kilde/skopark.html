@@ -1,0 +1,178 @@
+<main class="wrap sp">
+<div class="intro" style="margin-top:40px"><h1>Min skopark</h1>
+<p class="lede">Hold oversikt over dine egne løpesko: hva de kostet, hvor langt du har løpt i dem og hva de faktisk har kostet deg per kilometer.</p>
+<p class="small">Alt lagres bare i nettleseren på denne enheten. Ingen konto, og ingenting sendes til KmPris med mindre du selv velger å dele en ferdig sko anonymt. Ta sikkerhetskopi hvis du bytter telefon eller nettleser.</p></div>
+
+<div id="sp-warn" class="fit" hidden><b>Nettleseren din lar ikke siden lagre data.</b> Skoene forsvinner når du lukker siden. Det skjer ofte i privat modus.</div>
+
+<div class="sp-sum" id="sp-sum"></div>
+
+<div class="sp-grid">
+<section class="calc" id="sp-form-box"><h3 id="sp-form-title">Legg til sko</h3>
+<form id="sp-form" autocomplete="off">
+<input type="hidden" id="sp-id">
+<label class="sp-l" for="sp-model">Modell<input id="sp-model" class="field-input" list="sp-models" required placeholder="Begynn å skrive, f.eks. Pegasus"></label>
+<datalist id="sp-models"></datalist>
+<div class="calc-inputs">
+<label for="sp-price">Kjøpspris (kr)<input id="sp-price" type="number" min="0" inputmode="numeric" required></label>
+<label for="sp-km">Km løpt<input id="sp-km" type="number" min="0" step="1" inputmode="decimal" value="0"></label>
+<label for="sp-life">Forventet levetid (km)<input id="sp-life" type="number" min="50" step="10" inputmode="numeric" required></label>
+</div>
+<label class="sp-l" for="sp-date">Kjøpt (valgfritt)<input id="sp-date" type="date" class="field-input"></label>
+<p class="small" id="sp-hint">Velger du en modell fra lista, fylles laveste pris og vår anslåtte levetid inn. Endre gjerne til det du faktisk betalte.</p>
+<div class="sp-actions"><button type="submit" class="btn" id="sp-save">Legg til</button><button type="button" class="sp-link" id="sp-cancel" hidden>Avbryt</button></div>
+</form></section>
+
+<section><h2 class="sp-h">I bruk</h2><div id="sp-active"></div>
+<h2 class="sp-h" style="margin-top:40px">Pensjonert</h2><div id="sp-retired"></div></section>
+</div>
+
+<section class="block"><h2>Sikkerhetskopi</h2>
+<p>Dataene ligger bare på denne enheten. Last ned en fil av og til, og last den inn igjen på en ny telefon eller PC.</p>
+<div class="sp-actions"><button type="button" class="btn" id="sp-export">Last ned sikkerhetskopi</button>
+<label class="btn sp-ghost" for="sp-import">Last inn fra fil<input type="file" id="sp-import" accept="application/json,.json" hidden></label></div>
+<p class="small" id="sp-io-msg" aria-live="polite"></p></section>
+</main>
+
+<dialog id="sp-retire"><form method="dialog" id="sp-retire-form">
+<h3>Ferdig med skoen</h3>
+<p id="sp-retire-name"></p>
+<label class="sp-l" for="sp-retire-km">Totalt antall km<input id="sp-retire-km" type="number" min="0" class="field-input" required></label>
+<label class="sp-check"><input type="checkbox" id="sp-share" checked> Del modell og antall km anonymt med KmPris, så levetidene blir mer presise for alle.</label>
+<p class="small">Det som deles: modellnavnet, kategorien og antall km. Ikke navn, pris eller noe som kan knyttes til deg.</p>
+<div class="sp-actions"><button class="btn" value="ok" id="sp-retire-ok">Pensjoner skoen</button><button class="sp-link" value="cancel" formnovalidate>Avbryt</button></div>
+<p class="small" id="sp-retire-msg" aria-live="polite"></p>
+</form></dialog>
+
+<style>
+.sp-sum{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:8px 0 40px}
+.sp-sum div{background:var(--bib);border:2px solid var(--ink);border-radius:6px;padding:14px 16px}
+.sp-sum b{display:block;font-family:var(--display);font-weight:900;font-size:40px;line-height:1;color:var(--red)}
+.sp-sum span{font-size:13px;color:var(--muted)}
+.sp-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.5fr);gap:40px;align-items:start}
+.sp-l{display:flex;flex-direction:column;gap:5px;font-size:14px;font-weight:600;color:var(--ink-2)}
+.sp-l input{font-size:17px;padding:10px 12px}
+.sp-actions{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.sp-link{background:none;border:0;font:inherit;font-size:15px;text-decoration:underline;color:var(--ink-2);cursor:pointer;padding:6px}
+.sp-ghost{background:transparent;color:var(--ink);border:2px solid var(--ink);cursor:pointer}
+.sp-h{font-size:30px;margin-bottom:14px}
+.shoe{background:var(--bib);border:2px solid var(--ink);border-radius:6px;padding:16px 18px;margin-bottom:14px;display:flex;flex-direction:column;gap:10px}
+.shoe.ret{border-color:var(--line);opacity:.9}
+.shoe-top{display:flex;justify-content:space-between;gap:12px;align-items:baseline}
+.shoe-top h3{font-size:19px}.shoe-top h3 a{text-decoration:none}.shoe-top h3 a:hover{text-decoration:underline}
+.shoe-kr{font-family:var(--display);font-weight:900;font-size:34px;color:var(--red);white-space:nowrap;line-height:1}
+.shoe-kr small{font-size:.45em;color:var(--ink)}
+.bar{height:10px;border-radius:5px;background:var(--field);overflow:hidden}.bar i{display:block;height:100%;background:var(--good)}
+.bar.warn i{background:#C47F1F}.bar.over i{background:var(--red)}
+.shoe-meta{font-size:14px;color:var(--ink-2);display:flex;flex-wrap:wrap;gap:4px 16px}
+.shoe-add{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.shoe-add input{width:110px;font-size:16px;padding:8px 10px}
+.shoe-add button,.shoe-btns button{font:inherit;font-size:14px;font-weight:600;border:1px solid var(--ink);background:var(--bib);color:var(--ink);border-radius:4px;padding:8px 12px;cursor:pointer}
+.shoe-btns{display:flex;gap:6px;flex-wrap:wrap}.shoe-btns button.del{border-color:var(--line);color:var(--muted)}
+.sp-empty{color:var(--muted);font-size:15px;border:2px dashed var(--line);border-radius:6px;padding:18px}
+.sp-check{display:flex;gap:10px;align-items:flex-start;font-size:15px;margin:12px 0 4px}.sp-check input{margin-top:4px;width:18px;height:18px}
+dialog{border:2px solid var(--ink);border-radius:8px;padding:24px;max-width:460px;width:calc(100% - 32px);background:var(--bib);color:var(--ink)}
+dialog::backdrop{background:rgba(10,15,12,.55)}dialog h3{font-family:var(--display);font-size:30px;margin-bottom:8px}
+@media (max-width:820px){.sp-grid{grid-template-columns:1fr}.sp-sum{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
+
+<script>
+(function(){
+var KEY='kmpris-skopark-v1', FORM='https://formspree.io/f/myekavvb';
+var MODELS=window.KM_MODELS||[], CATS=window.KM_CATS||{};
+var mem=null, store=true;
+try{localStorage.setItem(KEY+'-t','1');localStorage.removeItem(KEY+'-t');}catch(e){store=false;document.getElementById('sp-warn').hidden=false;}
+function load(){ if(mem)return mem; try{mem=JSON.parse(localStorage.getItem(KEY))||[];}catch(e){mem=[];} return mem; }
+function save(list){ mem=list; try{localStorage.setItem(KEY,JSON.stringify(list));}catch(e){} render(); }
+function $(id){return document.getElementById(id);}
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function kr(n,d){return Number(n).toLocaleString('nb-NO',{minimumFractionDigits:d,maximumFractionDigits:d});}
+function findModel(name){name=(name||'').trim().toLowerCase();for(var i=0;i<MODELS.length;i++){if(MODELS[i].label.toLowerCase()===name)return MODELS[i];}return null;}
+var dl=$('sp-models'); dl.innerHTML=MODELS.map(function(m){return '<option value="'+esc(m.label)+'">';}).join('');
+
+$('sp-model').addEventListener('change',function(){
+  var m=findModel(this.value); if(!m||$('sp-id').value)return;
+  if(!$('sp-price').value)$('sp-price').value=m.price; $('sp-life').value=m.life;
+  $('sp-hint').textContent='Laveste pris nå: '+kr(m.price,0)+' kr. Vår anslåtte levetid: '+m.life+' km ('+m.cat+'). Endre til det du faktisk betalte.';
+});
+
+function resetForm(){ $('sp-form').reset(); $('sp-id').value=''; $('sp-km').value=0; $('sp-form-title').textContent='Legg til sko'; $('sp-save').textContent='Legg til'; $('sp-cancel').hidden=true; }
+$('sp-cancel').addEventListener('click',resetForm);
+$('sp-form').addEventListener('submit',function(e){
+  e.preventDefault();
+  var list=load().slice(), id=$('sp-id').value, name=$('sp-model').value.trim(), m=findModel(name);
+  var item={id:id||String(Date.now()), name:name, slug:m?m.slug:'', cat:m?m.cat:'', price:+$('sp-price').value||0, km:+$('sp-km').value||0, life:+$('sp-life').value||600, date:$('sp-date').value||'', retired:false};
+  if(id){ list=list.map(function(x){ return x.id===id ? Object.assign({},x,item,{retired:x.retired,finalKm:x.finalKm}) : x; }); }
+  else list.unshift(item);
+  save(list); resetForm();
+});
+
+function card(s){
+  var km=s.retired?(s.finalKm||s.km):s.km, perKm=km>0?s.price/km:null, proj=s.life>0?s.price/s.life:null;
+  var pct=s.life>0?Math.min(100,km/s.life*100):0, cls=pct>=100?' over':pct>=80?' warn':'';
+  var title=s.slug?'<a href="/sko/'+esc(s.slug)+'/">'+esc(s.name)+'</a>':esc(s.name);
+  var h='<article class="shoe'+(s.retired?' ret':'')+'" data-id="'+esc(s.id)+'"><div class="shoe-top"><h3>'+title+'</h3>'+
+    '<span class="shoe-kr">'+(perKm!=null?kr(perKm,2):'–')+'<small> kr/km'+(s.retired?'':' hittil')+'</small></span></div>';
+  if(!s.retired){
+    h+='<div class="bar'+cls+'" role="img" aria-label="'+Math.round(pct)+' prosent av forventet levetid"><i style="width:'+pct+'%"></i></div>'+
+      '<div class="shoe-meta"><span><b>'+kr(km,0)+'</b> av '+kr(s.life,0)+' km</span><span>Kjøpt for '+kr(s.price,0)+' kr</span>'+
+      (proj!=null?'<span>Blir '+kr(proj,2)+' kr/km ved '+kr(s.life,0)+' km</span>':'')+(pct>=100?'<span><b>Over forventet levetid</b></span>':'')+'</div>'+
+      '<div class="shoe-add"><label class="sr" for="add-'+esc(s.id)+'">Legg til km</label><input id="add-'+esc(s.id)+'" type="number" min="0" step="0.1" inputmode="decimal" placeholder="+ km"><button type="button" data-act="add">Legg til km</button></div>'+
+      '<div class="shoe-btns"><button type="button" data-act="edit">Endre</button><button type="button" data-act="retire">Ferdig med skoen</button><button type="button" data-act="del" class="del">Slett</button></div>';
+  } else {
+    h+='<div class="shoe-meta"><span><b>'+kr(km,0)+' km</b> totalt</span><span>Kjøpt for '+kr(s.price,0)+' kr</span>'+
+      (s.life?'<span>'+(km>=s.life?'Holdt '+kr(km-s.life,0)+' km lenger':'Holdt '+kr(s.life-km,0)+' km kortere')+' enn anslått</span>':'')+'</div>'+
+      '<div class="shoe-btns"><button type="button" data-act="unretire">Ta i bruk igjen</button><button type="button" data-act="del" class="del">Slett</button></div>';
+  }
+  return h+'</article>';
+}
+function render(){
+  var list=load(), act=list.filter(function(s){return !s.retired;}), ret=list.filter(function(s){return s.retired;});
+  $('sp-active').innerHTML=act.length?act.map(card).join(''):'<p class="sp-empty">Ingen sko ennå. Legg til den første i skjemaet.</p>';
+  $('sp-retired').innerHTML=ret.length?ret.map(card).join(''):'<p class="sp-empty">Når en sko er utslitt, trykk «Ferdig med skoen», så havner den her med endelig pris per km.</p>';
+  var totKm=0,totKr=0; list.forEach(function(s){totKm+=s.retired?(s.finalKm||s.km):s.km; totKr+=s.price;});
+  $('sp-sum').innerHTML='<div><b>'+act.length+'</b><span>sko i bruk</span></div><div><b>'+kr(totKm,0)+'</b><span>km totalt</span></div>'+
+    '<div><b>'+kr(totKr,0)+'</b><span>kroner brukt</span></div><div><b>'+(totKm>0?kr(totKr/totKm,2):'–')+'</b><span>kr per km i snitt</span></div>';
+}
+document.addEventListener('click',function(e){
+  var b=e.target.closest('[data-act]'); if(!b)return; var art=b.closest('.shoe'); var id=art&&art.dataset.id; var list=load().slice(); var s=list.filter(function(x){return x.id===id;})[0]; if(!s)return;
+  var a=b.dataset.act;
+  if(a==='add'){ var v=parseFloat((art.querySelector('input').value||'').replace(',','.')); if(!(v>0))return; s.km=Math.round((s.km+v)*10)/10; save(list); }
+  else if(a==='edit'){ $('sp-id').value=s.id; $('sp-model').value=s.name; $('sp-price').value=s.price; $('sp-km').value=s.km; $('sp-life').value=s.life; $('sp-date').value=s.date||'';
+    $('sp-form-title').textContent='Endre sko'; $('sp-save').textContent='Lagre'; $('sp-cancel').hidden=false; $('sp-form-box').scrollIntoView({behavior:'smooth'}); }
+  else if(a==='del'){ if(art.dataset.confirm!=='1'){ art.dataset.confirm='1'; b.textContent='Trykk igjen for å slette'; return; } save(list.filter(function(x){return x.id!==id;})); }
+  else if(a==='unretire'){ s.retired=false; s.km=s.finalKm||s.km; delete s.finalKm; save(list); }
+  else if(a==='retire'){ openRetire(s); }
+});
+var retiring=null;
+function openRetire(s){ retiring=s.id; $('sp-retire-name').textContent=s.name; $('sp-retire-km').value=Math.round(s.km); $('sp-retire-msg').textContent=''; $('sp-share').checked=true;
+  var d=$('sp-retire'); if(d.showModal)d.showModal(); else d.setAttribute('open',''); }
+$('sp-retire').addEventListener('close',function(){
+  if(this.returnValue!=='ok'||!retiring)return;
+  var list=load().slice(), s=list.filter(function(x){return x.id===retiring;})[0]; if(!s)return;
+  var km=+$('sp-retire-km').value||s.km; s.retired=true; s.finalKm=km; s.km=km; save(list);
+  if($('sp-share').checked&&km>0){
+    var fd=new FormData(); fd.append('type','levetid'); fd.append('modell',s.name); fd.append('kategori',s.cat||'ukjent'); fd.append('km',String(Math.round(km))); fd.append('fra_liste',s.slug?'ja':'nei');
+    fetch(FORM,{method:'POST',headers:{'Accept':'application/json'},body:fd}).catch(function(){});
+  }
+  retiring=null;
+});
+$('sp-export').addEventListener('click',function(){
+  var blob=new Blob([JSON.stringify({kmpris:'skopark',versjon:1,lagret:new Date().toISOString(),sko:load()},null,1)],{type:'application/json'});
+  var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='kmpris-skopark-'+new Date().toISOString().slice(0,10)+'.json'; document.body.appendChild(a); a.click(); a.remove();
+  $('sp-io-msg').textContent='Sikkerhetskopien er lastet ned.';
+});
+$('sp-import').addEventListener('change',function(){
+  var f=this.files[0]; if(!f)return; var r=new FileReader();
+  r.onload=function(){ try{ var d=JSON.parse(r.result); var arr=Array.isArray(d)?d:d.sko; if(!Array.isArray(arr))throw 0;
+      arr=arr.filter(function(x){return x&&x.name&&typeof x.price==='number';}).map(function(x){return {id:String(x.id||Date.now()+Math.random()),name:String(x.name).slice(0,80),slug:String(x.slug||'').replace(/[^a-z0-9-]/g,''),cat:String(x.cat||'').slice(0,30),price:+x.price||0,km:+x.km||0,life:+x.life||600,date:String(x.date||'').slice(0,10),retired:!!x.retired,finalKm:x.finalKm?+x.finalKm:undefined};});
+      var have={}; load().forEach(function(x){have[x.id]=1;}); var merged=load().concat(arr.filter(function(x){return !have[x.id];}));
+      save(merged); $('sp-io-msg').textContent=arr.length+' sko lest inn.';
+    }catch(e){ $('sp-io-msg').textContent='Fant ingen skopark i filen.'; } };
+  r.readAsText(f); this.value='';
+});
+var q=new URLSearchParams(location.search).get('legg');
+if(q){ for(var i=0;i<MODELS.length;i++){ if(MODELS[i].slug===q){ $('sp-model').value=MODELS[i].label; $('sp-model').dispatchEvent(new Event('change')); $('sp-price').focus(); break; } } }
+render();
+})();
+</script>
