@@ -25,6 +25,8 @@ automatisk av GitHub Pages fra `main` til https://kmpris.no.
 - `logg/levetid.csv`: anonyme levetider fra lesere som pensjonerer sko i Min skopark.
 - `logg/forslag.md`: forslag fra leserne som er behandlet (ett per linje med dato og utfall).
 - `verktoy/sjekk.py`: kvalitetssjekk i Playwright. Skriver `OK` når alt er i orden.
+- `verktoy/oppgavetekst.py`: skriver hele teksten til den planlagte oppgaven, med alle Prisjakt-adresser.
+  Adressene må stå i oppgaveteksten for at WebFetch skal hente dem uten manuell godkjenning.
 - `logg/`: én rapport og én prisfil per oppdatering.
 
 ## Fremgangsmåte
@@ -72,6 +74,7 @@ automatisk av GitHub Pages fra `main` til https://kmpris.no.
 4. `python3 verktoy/oppdater.py logg/priser-ÅÅÅÅ-MM-DD.json`. Ved kode 2: ikke publiser, meld fra.
 5. `pip install playwright` hvis den mangler, deretter `python3 verktoy/sjekk.py`. Hvis ikke `OK`: `git checkout -- kilde index.html`, ikke publiser, meld fra med feilene.
 6. Commit `kilde/data.js`, `kilde/reserve.json`, `index.html`, `sko/`, `min-skopark/`, `sammenlign/`, `assets/`, `sitemap.xml` og `logg/` med meldingen `Prisoppdatering ÅÅÅÅ-MM-DD` og push til `main`.
+6b. Kjør `python3 verktoy/oppgavetekst.py`. Er id-ene endret, oppdater den planlagte oppgaven «KmPris prisoppdatering» med utskriften som ny tekst.
 7. Send Tore en kort rapport på norsk: antall endrede priser, de 5 største endringene,
    hva som ble holdt tilbake og hvorfor, hvilke leserforslag som ble lagt til (og om det var med ca.-pris) eller avvist,
    hvilke ca.-sko som er flyttet til Prisjakt eller har gammel pris,
