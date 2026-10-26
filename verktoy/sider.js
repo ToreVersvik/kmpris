@@ -10,6 +10,11 @@ const { SITE, MODELS, LIFE, SHOES, LIFE_ADJ, PRICES_SOURCE } = ctx;
 const lifeKm = ctx.lifeKm, lifeAdj = ctx.lifeAdj, perKm = ctx.perKm, group = ctx.group;
 let TESTS = {};
 try { TESTS = JSON.parse(src('tester.json')); } catch (e) { /* valgfri fil */ }
+// Reservepriser (sko som ikke finnes på Prisjakt ennå): {"Merke|Modell|G": {kilde, url, dato}}
+let RESERVE = {};
+try { RESERVE = JSON.parse(src('reserve.json')); } catch (e) { /* valgfri fil */ }
+const resOf = s => (!s.pj && RESERVE[s.brand + '|' + s.name + '|' + s.g]) || null;
+const datoNo = d => d ? d.split('-').reverse().join('.') : '';
 
 const BASE = 'https://kmpris.no';
 const CAT = {
@@ -94,7 +99,9 @@ for (const m of models.values()) {
   const allApprox = rows.every(r => r.approx);
 
   const priceRows = rows.map(r => `<tr><td>${esc(GLABEL[r.g])}</td><td class="n">${r.approx ? 'ca. ' : ''}${kr(r.nok, 0)} kr</td><td class="n"><b>${kr(perKm(r), 2)}</b></td>
-<td class="n"><a href="${rich && rich.shop && !r.pj ? esc(rich.shop) : pjUrl(r)}" rel="nofollow">${rich && rich.shop && !r.pj ? esc(rich.shopName || 'Butikken') : 'Prisjakt'} ↗</a></td></tr>`).join('');
+<td class="n"><a href="${rich && rich.shop && !r.pj ? esc(rich.shop) : resOf(r) ? esc(resOf(r).url) : pjUrl(r)}" rel="nofollow">${rich && rich.shop && !r.pj ? esc(rich.shopName || 'Butikken') : resOf(r) ? esc(resOf(r).kilde) : 'Prisjakt'} ↗</a></td></tr>`).join('');
+  const res = rows.map(resOf).find(Boolean) || null;
+  const resText = res ? `Ca.-pris fra ${esc(res.kilde)} ${esc(datoNo(res.dato))}, fordi modellen ikke finnes på Prisjakt ennå.` : '';
 
   const lifeText = adj
     ? `<p>Vi regner med <b>${km} km</b>. Standard for ${c.one} er ${base} km. Justert fordi en uavhengig lab-test målte yttersålen: ${kr(adj.t, 1)} mm tykk (snitt ${kr(adj.at, 1)} mm) og ${kr(adj.w, 1)} mm slitasje i slipetesten (snitt ${kr(adj.aw, 1)} mm, lavere er bedre). Kilde: <a href="${esc(adj.src)}">RunRepeat</a>.</p>`
@@ -130,7 +137,7 @@ ${rich.specs && rich.specs.length ? '<dl class="facts">' + rich.specs.map(x => `
 <div class="m-head"><div class="stack">
 <span class="brandline"><i class="sw" style="background:${c.color}"></i>${esc(c.label)}sko fra ${esc(m.brand)}</span>
 <h1>${esc(m.name)}</h1>
-<p class="lede">Fra ${approx ? 'ca. ' : ''}${kr(minPrice, 0)} kr. ${rows.length > 1 ? 'Egen pris for ' + rows.map(r => GLABEL[r.g].toLowerCase()).join(' og ') + '. ' : ''}${allApprox ? 'Omregnet fra euro, se kilde under.' : 'Laveste pris på Prisjakt ' + esc(PRICES_SOURCE.date || SITE.updated) + '.'}</p></div>
+<p class="lede">Fra ${approx ? 'ca. ' : ''}${kr(minPrice, 0)} kr. ${rows.length > 1 ? 'Egen pris for ' + rows.map(r => GLABEL[r.g].toLowerCase()).join(' og ') + '. ' : ''}${allApprox ? (res && !rich ? resText : 'Omregnet fra euro, se kilde under.') : 'Laveste pris på Prisjakt ' + esc(PRICES_SOURCE.date || SITE.updated) + '.' + (res ? ' ' + resText : '')}</p></div>
 <div class="bib big-km"><div class="bib-top"><span>KmPris</span><span>${rows.length > 1 ? esc(GLABEL[best.g]) : ''}</span></div>
 <div class="bib-num">${kr(perKm(best), 2)}<small>kr/km</small></div>
 <p class="bib-foot">Plass ${rank} av ${list.length} blant ${c.many}, regnet med ${km} km levetid.</p></div></div>
@@ -138,7 +145,7 @@ ${rich.specs && rich.specs.length ? '<dl class="facts">' + rich.specs.map(x => `
 <div class="m-grid"><div>
 <div class="block"><h2>Priser</h2>
 <table class="res"><thead><tr><th>Variant</th><th class="n">Laveste pris</th><th class="n">kr/km</th><th class="n">Se priser</th></tr></thead><tbody>${priceRows}</tbody></table>
-<p class="small">${allApprox ? (rich && rich.priceSrc ? esc(rich.priceSrc) + '. ' : '') + 'Merket finnes ikke på Prisjakt, så prisen er omregnet fra euro og kan avvike.' : 'Prisen er laveste pris på Prisjakt, som ofte gjelder enkelte størrelser eller farger.'} Sjekk alltid prisen i din størrelse.</p></div>
+<p class="small">${allApprox ? (res && !rich ? 'Modellen finnes ikke på Prisjakt ennå, så prisen er laveste treff på ' + esc(res.kilde) + ' og kan avvike.' : (rich && rich.priceSrc ? esc(rich.priceSrc) + '. ' : '') + 'Merket finnes ikke på Prisjakt, så prisen er omregnet fra euro og kan avvike.') : 'Prisen er laveste pris på Prisjakt, som ofte gjelder enkelte størrelser eller farger.'} Sjekk alltid prisen i din størrelse.</p></div>
 <div class="block"><h2>Levetid</h2>${lifeText}
 <p class="small">Hvor lenge en sko varer, avhenger mye av vekt, underlag og løpsstil. <a href="/#metode">Les hvordan vi regner</a>.</p></div>
 ${richHtml}

@@ -68,6 +68,17 @@ if changed:
 for title, items in (('## Holdt tilbake (sjekk manuelt)', flagged), ('## Mangler pris', missing)):
     if items:
         lines.append(title); lines += ['- ' + x for x in items]; lines.append('')
+try:
+    reserve = json.load(open(os.path.join(src, 'reserve.json'), encoding='utf-8'))
+except FileNotFoundError:
+    reserve = {}
+if reserve:
+    lines.append('## Ca.-priser (ikke på Prisjakt ennå)')
+    for key, v in sorted(reserve.items()):
+        days = (datetime.date.today() - datetime.date.fromisoformat(v['dato'])).days
+        lines.append(f"- {key.replace('|', ' ', 1).replace('|', ' (', 1)}): {v['kilde']} {v['dato']}"
+                     + (f' – GAMMEL PRIS ({days} dager), sjekk manuelt' if days > 28 else ''))
+    lines.append('')
 os.makedirs(os.path.join(root, 'logg'), exist_ok=True)
 rep = '\n'.join(lines)
 open(os.path.join(root, 'logg', f'oppdatering-{datetime.date.today().isoformat()}.md'), 'w', encoding='utf-8').write(rep)

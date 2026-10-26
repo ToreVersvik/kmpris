@@ -17,6 +17,9 @@ automatisk av GitHub Pages fra `main` til https://kmpris.no.
   Avbryter uten å endre noe (kode 2) hvis over 20 % av radene mangler pris.
 - `verktoy/bygg.py`: bygger `index.html` uten å endre priser.
 - `verktoy/legg_til.py "Merke" "Modell" <kategori> <H|D|U> <pris> <prisjaktId>`: legger til én ny sko-rad.
+  Med `reserve <url>` i stedet for Prisjakt-id legges skoen inn med ca.-pris fra en reservekilde (se 3b).
+- `kilde/reserve.json`: sko som ikke finnes på Prisjakt ennå, med kilde (Prisradar), url og dato for ca.-prisen.
+- `verktoy/reserve.py liste | pris | bytt`: viser, oppdaterer og flytter reserve-sko over til Prisjakt (se 3d).
 - `sammenlign/index.html`: sammenligning av 2–5 sko, bygget av `verktoy/sider.js` fra `kilde/sammenlign.html`.
 - `min-skopark/index.html`: Min skopark, bygget av `verktoy/sider.js` fra `kilde/skopark.html`. Lagrer bare i leserens nettleser.
 - `logg/levetid.csv`: anonyme levetider fra lesere som pensjonerer sko i Min skopark.
@@ -39,28 +42,43 @@ automatisk av GitHub Pages fra `main` til https://kmpris.no.
    Hopp over forslag som allerede står i `logg/forslag.md` eller som allerede finnes i `kilde/data.js`.
    E-poster med feltet `type: levetid` er ikke modellforslag. Dem behandler du i steg 3c.
    For hvert nytt forslag (maks 10 per uke):
-   - Finn modellen på Prisjakt (for eksempel WebFetch av `https://www.prisjakt.no/search?search=<modell>`),
-     én produktside for herre og én for dame der begge finnes, ellers unisex.
+   - Finn modellen på Prisjakt. Prisjakt-søket er sperret for WebFetch (robots), så bruk WebSearch med
+     `allowed_domains: ["prisjakt.no"]` (for eksempel `prisjakt <merke> <modell>`) og hent produktsidene med WebFetch.
+     Én produktside for herre og én for dame der begge finnes, ellers unisex.
    - Ta den bare med hvis det er en løpesko for voksne til asfalt eller terreng. Ikke GTX/vanntett,
-     piggsko, barnesko eller sko uten norsk pris på Prisjakt.
+     piggsko eller barnesko.
+   - **Reserve når modellen ikke finnes på Prisjakt:** søk på Prisradar med WebSearch
+     (`allowed_domains: ["prisradar.no"]`) og hent treffene med WebFetch (produktsider `prisradar.no/produkter/...`
+     eller listesider `prisradar.no/tilbud/...`). Prisradar har én side per farge og størrelse: ta laveste
+     nåværende pris blant variantene som er nøyaktig riktig modell og kjønn, og hopp over GTX, wide og barn.
+     Legg til med `verktoy/legg_til.py "Merke" "Modell" <kategori> <H|D|U> <pris> reserve <url til treffet>`.
+     Skoen vises da som «ca.» med Prisradar som kilde. Finnes den heller ikke der, avvis forslaget.
+     Andre butikker (XXL, Løpeshop) brukes ikke: de er sperret eller tomme for WebFetch.
    - Velg kategori slik KmPris bruker dem: `daglig` (trening), `stabil` (trening med støtte), `tempo`
      (tempo- og plate-sko for trening), `konk` (konkurransesko med karbonplate), `terreng`.
-   - Legg til med `verktoy/legg_til.py` med laveste nåværende pris og Prisjakt-id-en.
-   - Skriv én linje per forslag i `logg/forslag.md`: `- ÅÅÅÅ-MM-DD «forslag»: lagt til som Merke Modell (H/D), kategori` eller `… ikke lagt til: grunn`.
+   - Legg til med `verktoy/legg_til.py` med laveste nåværende pris og Prisjakt-id-en (eller `reserve <url>`, se over).
+   - Skriv én linje per forslag i `logg/forslag.md`: `- ÅÅÅÅ-MM-DD «forslag»: lagt til som Merke Modell (H/D), kategori (ca.-pris fra Prisradar)` når reserven er brukt, eller `… ikke lagt til: grunn`.
 3c. **Levetid fra Min skopark.** E-poster fra Formspree med `type: levetid` kommer fra lesere som har pensjonert en sko.
    De har feltene `modell`, `kategori`, `km` og `fra_liste`. Legg hver av dem til som én linje i `logg/levetid.csv`
    (`dato,modell,kategori,km`, opprett fila med den overskriften hvis den mangler). Hopp over linjer som allerede står der
    (samme dato, modell og km) og åpenbart urimelige tall (under 50 eller over 3000 km). Ikke endre levetider på siden ut fra dette.
    Ta med i rapporten hvor mange nye innsendinger som kom, og samlet antall per modell når en modell har minst 5.
+3d. **Ca.-priser.** `python3 verktoy/reserve.py liste` viser sko som ikke var på Prisjakt. For hver av dem:
+   - Søk etter modellen på Prisjakt som i 3b. Finnes den nå med riktig kjønn og norsk pris:
+     `python3 verktoy/reserve.py bytt "Merke|Modell|G" <prisjaktId> <pris>`.
+   - Ellers: hent ny laveste pris på Prisradar som i 3b og kjør `python3 verktoy/reserve.py pris "Merke|Modell|G" <pris> [ny url]`.
+     Nekter verktøyet (hopp over 45 %), eller finnes ingen pris, la den stå og nevn det i rapporten.
+   Rapporten fra oppdater.py lister alle ca.-priser og merker dem som er over 28 dager gamle.
 4. `python3 verktoy/oppdater.py logg/priser-ÅÅÅÅ-MM-DD.json`. Ved kode 2: ikke publiser, meld fra.
 5. `pip install playwright` hvis den mangler, deretter `python3 verktoy/sjekk.py`. Hvis ikke `OK`: `git checkout -- kilde index.html`, ikke publiser, meld fra med feilene.
-6. Commit `kilde/data.js`, `index.html`, `sko/`, `min-skopark/`, `sammenlign/`, `assets/`, `sitemap.xml` og `logg/` med meldingen `Prisoppdatering ÅÅÅÅ-MM-DD` og push til `main`.
+6. Commit `kilde/data.js`, `kilde/reserve.json`, `index.html`, `sko/`, `min-skopark/`, `sammenlign/`, `assets/`, `sitemap.xml` og `logg/` med meldingen `Prisoppdatering ÅÅÅÅ-MM-DD` og push til `main`.
 7. Send Tore en kort rapport på norsk: antall endrede priser, de 5 største endringene,
-   hva som ble holdt tilbake og hvorfor, hvilke leserforslag som ble lagt til eller avvist,
+   hva som ble holdt tilbake og hvorfor, hvilke leserforslag som ble lagt til (og om det var med ca.-pris) eller avvist,
+   hvilke ca.-sko som er flyttet til Prisjakt eller har gammel pris,
    og om billigste sko per kategori har endret seg.
 
 ## Ikke gjør
 
-- Ikke endre tekst, design, kategorier eller levetider. Bare priser og dato.
+- Ikke endre tekst, design, kategorier eller levetider. Bare priser, dato og ca.-priser (3b og 3d).
 - Ikke legg til sko utenom leserforslag (steg 3b), og ikke fjern sko. Foreslå det heller i rapporten.
 - Ikke rør `CNAME` eller `LIFE_ADJ` (levetidsjusteringene i `data.js`). Nye lab-justeringer legges inn manuelt.
