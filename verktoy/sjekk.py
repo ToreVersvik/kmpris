@@ -30,6 +30,9 @@ with sync_playwright() as p:
     import glob, re as _re
     pages = sorted(glob.glob(os.path.join(root, 'sko', '*', 'index.html')))
     if len(pages) < 150: problems.append(f'bare {len(pages)} skosider')
+    pairs = sorted(glob.glob(os.path.join(root, 'sammenlign', '*-vs-*', 'index.html')))
+    if len(pairs) < 100: problems.append(f'bare {len(pairs)} sammenligningssider')
+    pages += pairs
     for fp in pages:
         t = open(fp, encoding='utf-8').read()
         for bad in ['undefined', 'NaN', 'Infinity', '[object']:

@@ -46,6 +46,7 @@ if checked and len(missing) > 0.2 * checked:
     print(f'AVBRUTT: {len(missing)} av {checked} rader mangler pris fra Prisjakt. Ingenting er endret eller publisert.')
     sys.exit(2)
 data = re.sub(r'(updated:\s*")[\d.]+(")', r'\g<1>' + today + r'\2', data, count=1)
+data = re.sub(r'(PRICES_SOURCE = \{ name:"Prisjakt", date:")[\d.]+(")', r'\g<1>' + today + r'\2', data, count=1)
 open(os.path.join(src, 'data.js'), 'w', encoding='utf-8').write(data)
 
 head = open(os.path.join(src, 'head.html'), encoding='utf-8').read()

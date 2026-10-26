@@ -171,7 +171,7 @@ var LIFE = {
   terreng: { km:550, range:"400–700 km", label:"Terrengsko" }
 };
 var LIFE_SOURCES = [["Rundida, Shoe Mileage Tracker","https://rundida.com/tools/shoe-mileage/"],["Swift Running, levetid for karbonsko","https://www.swift-running.com/blogs/articles/how-long-do-carbon-plate-running-shoes-last-lifespan-tips"],["Philotimo Running Coach, asfalt mot terreng","https://www.philotimorunningcoach.ca/blog/when-is-the-right-time-to-change-running-shoes"]];
-var PRICES_SOURCE = { name:"Prisjakt", date:"12.10.2026" };
+var PRICES_SOURCE = { name:"Prisjakt", date:"26.10.2026" };
 
 /* Alle sko i rangeringen. Felter: merke, modell, skotype, kjønn (H herre, D dame, U unisex, X ikke oppgitt),
    laveste pris i kr, Prisjakt-produkt-id, egen side (id i MODELS), omregnet pris (1 = omregnet fra euro). */

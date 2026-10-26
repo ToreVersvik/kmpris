@@ -10,6 +10,10 @@ automatisk av GitHub Pages fra `main` til https://kmpris.no.
 - `sko/<slug>/index.html`: én statisk side per skomodell, `assets/kmpris.css`, `sitemap.xml` og `robots.txt`.
   Lages av `verktoy/sider.js` (kjøres automatisk av bygg.py og oppdater.py). Ikke rediger for hånd.
 - `assets/og/*.png`: delingsbilder, lages av `verktoy/bilder.py` bare når de mangler (nye sko får bilde automatisk).
+- `kilde/spesifikasjoner.json`: vekt, dropp, stack, plate, demping og skum per modell fra RunRepeat, `{"Merke|Modell": {..., "kilde": url, "dato"}}`.
+  Vises på skosidene og brukes i sammenligningssidene. Ikke endre eksisterende tall i den ukentlige jobben.
+- `sammenlign/<a>-vs-<b>/index.html`: rundt 280 statiske sammenligningssider (ny mot forrige versjon og nærmeste konkurrenter),
+  bygget av `verktoy/sider.js`. Bygges helt på nytt hver gang. Ikke rediger for hånd.
 - `kilde/tester.json`: ekstra testlenker per modell, `{"Merke|Modell": [["Tittel", "url"], ...]}`. Vedlikeholdes manuelt.
 - `verktoy/idliste.py`: lister Prisjakt-id-ene som skal sjekkes.
 - `verktoy/oppdater.py <prisfil.json>`: legger inn nye priser, setter dato og bygger `index.html`.
@@ -59,6 +63,9 @@ automatisk av GitHub Pages fra `main` til https://kmpris.no.
    - Velg kategori slik KmPris bruker dem: `daglig` (trening), `stabil` (trening med støtte), `tempo`
      (tempo- og plate-sko for trening), `konk` (konkurransesko med karbonplate), `terreng`.
    - Legg til med `verktoy/legg_til.py` med laveste nåværende pris og Prisjakt-id-en (eller `reserve <url>`, se over).
+   - For nye modeller: finn RunRepeat-siden med WebSearch (`allowed_domains: ["runrepeat.com"]`), bare eksakt samme modell og versjon,
+     og legg tallene inn i `kilde/spesifikasjoner.json` med WebFetch-prompten `Svar bare med JSON på én linje fra lab-dataene/spesifikasjonene på siden: {"vekt_g": <vekt i gram, herre US 9 hvis oppgitt>, "dropp_mm": <målt dropp>, "hael_mm": <stack høyde hæl>, "forfot_mm": <stack forfot>, "plate": "<karbon|nylon|ingen|annet>", "demping": "<myk|balansert|fast eller null>", "skum": "<navn på mellomsåle-skum>"}. Bruk null der tallet ikke finnes.`
+     Finnes ingen side, la modellen stå uten spesifikasjoner. Sammenligningssidene oppdateres automatisk.
    - Skriv én linje per forslag i `logg/forslag.md`: `- ÅÅÅÅ-MM-DD «forslag»: lagt til som Merke Modell (H/D), kategori (ca.-pris fra Prisradar)` når reserven er brukt, eller `… ikke lagt til: grunn`.
 3c. **Levetid fra Min skopark.** E-poster fra Formspree med `type: levetid` kommer fra lesere som har pensjonert en sko.
    De har feltene `modell`, `kategori`, `km` og `fra_liste`. Legg hver av dem til som én linje i `logg/levetid.csv`
@@ -73,7 +80,7 @@ automatisk av GitHub Pages fra `main` til https://kmpris.no.
    Rapporten fra oppdater.py lister alle ca.-priser og merker dem som er over 28 dager gamle.
 4. `python3 verktoy/oppdater.py logg/priser-ÅÅÅÅ-MM-DD.json`. Ved kode 2: ikke publiser, meld fra.
 5. `pip install playwright` hvis den mangler, deretter `python3 verktoy/sjekk.py`. Hvis ikke `OK`: `git checkout -- kilde index.html`, ikke publiser, meld fra med feilene.
-6. Commit `kilde/data.js`, `kilde/reserve.json`, `index.html`, `sko/`, `min-skopark/`, `sammenlign/`, `assets/`, `sitemap.xml` og `logg/` med meldingen `Prisoppdatering ÅÅÅÅ-MM-DD` og push til `main`.
+6. Commit `kilde/data.js`, `kilde/reserve.json`, `kilde/spesifikasjoner.json`, `index.html`, `sko/`, `min-skopark/`, `sammenlign/`, `assets/`, `sitemap.xml` og `logg/` med meldingen `Prisoppdatering ÅÅÅÅ-MM-DD` og push til `main`.
 6b. Kjør `python3 verktoy/oppgavetekst.py`. Er id-ene endret, send utskriften til Tore og be ham lime den inn som ny tekst i den planlagte oppgaven «KmPris prisoppdatering» (en kjøring kan ikke endre oppgaven selv).
 7. Send Tore en kort rapport på norsk: antall endrede priser, de 5 største endringene,
    hva som ble holdt tilbake og hvorfor, hvilke leserforslag som ble lagt til (og om det var med ca.-pris) eller avvist,
