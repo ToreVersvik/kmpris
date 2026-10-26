@@ -6,6 +6,7 @@ Gjelder markedsføreragenten og alle innlegg fra KmPris-kontoen.
 - Post bare fra KmPris-kontoen: X @KmPris_no, Typefully social set 352357. Ser du en annen konto i Typefully (for eksempel en personlig konto), ikke bruk den. Stopp og si fra til Tore.
 - Lag innlegg som **utkast** i Typefully. Ikke planlegg eller publiser uten at Tore har godkjent, før han sier noe annet.
 
+- Sett alltid KI-merking på X-innlegg (`made_with_ai: true`).
 - Typefully-planen gir 10 publiseringer per måned. Lag maks 5 utkast per uke, så det ikke blir flere enn kvoten.
 
 ## Tone
