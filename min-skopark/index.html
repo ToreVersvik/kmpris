@@ -86,6 +86,7 @@ dialog::backdrop{background:rgba(10,15,12,.55)}dialog h3{font-family:var(--displ
 </style>
 
 <script>
+function skoUrl(x){return ['','sko',x,''].join('/');}
 (function(){
 var KEY='kmpris-skopark-v1', FORM='https://formspree.io/f/myekavvb';
 var MODELS=window.KM_MODELS||[], CATS=window.KM_CATS||{};
@@ -119,7 +120,7 @@ $('sp-form').addEventListener('submit',function(e){
 function card(s){
   var km=s.retired?(s.finalKm||s.km):s.km, perKm=km>0?s.price/km:null, proj=s.life>0?s.price/s.life:null;
   var pct=s.life>0?Math.min(100,km/s.life*100):0, cls=pct>=100?' over':pct>=80?' warn':'';
-  var title=s.slug?'<a href="/sko/'+esc(s.slug)+'/">'+esc(s.name)+'</a>':esc(s.name);
+  var title=s.slug?'<a href="'+skoUrl(esc(s.slug))+'">'+esc(s.name)+'</a>':esc(s.name);
   var h='<article class="shoe'+(s.retired?' ret':'')+'" data-id="'+esc(s.id)+'"><div class="shoe-top"><h3>'+title+'</h3>'+
     '<span class="shoe-kr">'+(perKm!=null?kr(perKm,2):'–')+'<small> kr/km'+(s.retired?'':' hittil')+'</small></span></div>';
   if(!s.retired){

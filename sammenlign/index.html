@@ -49,6 +49,7 @@ table.cmp-t tr.hl td b{font-family:var(--display);font-weight:900;font-size:30px
 </style>
 
 <script>
+function skoUrl(x){return ['','sko',x,''].join('/');}
 (function(){
 var ALL=window.KM_CMP||[], MAX=5, by={}; ALL.forEach(function(m){by[m.slug]=m;});
 function $(id){return document.getElementById(id);}
@@ -83,9 +84,9 @@ function draw(){
     ['Pris per km', ms.map(function(m){return cell(m.perKm,m.perKm===bk,'<b>'+kr(m.perKm,2)+'</b> kr');}), 'hl'],
     ['1 000 km koster', ms.map(function(m){return cell(m.perKm,m.perKm===bk,'<b class="big">'+kr(Math.round(m.perKm*1000/10)*10,0)+'</b> kr<span class="s">'+kr(1000/m.life,1)+' par</span>');})],
     ['Yttersåle (lab)', ms.map(function(m){return '<td>'+(m.adj?kr(m.adj.t,1)+' mm tykk, '+kr(m.adj.w,1)+' mm slitasje<span class="s">Snitt '+kr(m.adj.at,1)+' / '+kr(m.adj.aw,1)+' mm. <a href="'+esc(m.adj.src)+'">Kilde</a></span>':'<span class="s">Ikke målt</span>')+'</td>';})],
-    ['Se priser', ms.map(function(m){return '<td><a href="/sko/'+m.slug+'/">Skoside</a> · <a href="'+esc(m.pj)+'" rel="nofollow">Prisjakt ↗</a></td>';})]
+    ['Se priser', ms.map(function(m){return '<td><a href="'+skoUrl(m.slug)+'">Skoside</a> · <a href="'+esc(m.pj)+'" rel="nofollow">Prisjakt ↗</a></td>';})]
   ];
-  var h='<div class="c-scroll"><table class="cmp-t"><thead><tr><th></th>'+ms.map(function(m){return '<th><a href="/sko/'+m.slug+'/">'+esc(m.name)+'</a><span class="b">'+esc(m.brand)+'</span></th>';}).join('')+'</tr></thead><tbody>'+
+  var h='<div class="c-scroll"><table class="cmp-t"><thead><tr><th></th>'+ms.map(function(m){return '<th><a href="'+skoUrl(m.slug)+'">'+esc(m.name)+'</a><span class="b">'+esc(m.brand)+'</span></th>';}).join('')+'</tr></thead><tbody>'+
     rows.map(function(r){return '<tr'+(r[2]?' class="'+r[2]+'"':'')+'><th scope="row">'+r[0]+'</th>'+r[1].join('')+'</tr>';}).join('')+'</tbody></table></div>';
   var cats={}; ms.forEach(function(m){cats[m.cat]=1;});
   if(Object.keys(cats).length>1) h+='<p class="small" style="margin-top:10px">Skoene er i ulike kategorier. En konkurransesko og en treningssko er laget for ulike ting, så pris per km sier mest når du sammenligner sko av samme type.</p>';
