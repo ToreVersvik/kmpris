@@ -1,5 +1,11 @@
 # Ukentlig prisoppdatering av KmPris
 
+> **PAUSET 28.10.2026: Ikke hent priser fra Prisjakt.** Prisjakts brukervilkår forbyr automatisert innhenting
+> og gjenpublisering av data uten skriftlig avtale. Den planlagte prisoppdateringen er slått av. Steg 2–3 og 4
+> (prishenting og prisoppdatering) skal ikke kjøres før det finnes en lovlig priskilde (butikkenes produktfeeder via
+> Adtraction/Awin, eller skriftlig avtale med Prisjakt). Leserforslag og logg kan fortsatt behandles manuelt.
+
+
 Denne fila er oppskriften den planlagte mandagsjobben følger. Siden publiseres
 automatisk av GitHub Pages fra `main` til https://kmpris.no.
 
