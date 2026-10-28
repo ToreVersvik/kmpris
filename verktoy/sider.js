@@ -204,7 +204,7 @@ function page({ title, desc, url, body, img, nav }) {
 <nav class="main" aria-label="Hovedmeny"><a href="/#skoene"${nav === 'skoene' ? ' aria-current="page"' : ''}>Rangering</a><a href="/#velg">Velg sko</a><a href="/sammenlign/"${nav === 'cmp' ? ' aria-current="page"' : ''}>Sammenlign</a><a href="/min-skopark/"${nav === 'skopark' ? ' aria-current="page"' : ''}>Min skopark</a><a href="/#kjop">Butikker</a><a href="/#om">Om KmPris</a></nav></div></header>
 ${body}
 <footer><div class="wrap"><span>KmPris (Kilometerpris) er uavhengig og ikke tilknyttet merkene, distributørene eller butikkene som nevnes. Siden tjener ingen provisjon i dag. Hvis det endrer seg, merkes lenkene tydelig.</span>
-<span>Laget av Tore i Telemark. <a href="/#personvern">Personvern</a> · <a href="/#om">Om KmPris</a> · <a href="mailto:post@kmpris.no">post@kmpris.no</a></span>
+<span>Laget av Tore i Telemark. <a href="/#personvern">Personvern</a> · <a href="/#om">Om KmPris</a> · <a href="mailto:post@kmpris.no">post@kmpris.no</a> · Følg oss på <a href="https://www.facebook.com/profile.php?id=61596144053631" rel="me noopener">Facebook</a> og <a href="https://x.com/KmPris_no" rel="me noopener">X</a></span>
 <span>Priser sist sjekket ${esc(SITE.updated)}.</span></div></footer>
 <script data-goatcounter="https://kmpris.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script></body></html>`;
 }
