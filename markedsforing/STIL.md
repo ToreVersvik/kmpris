@@ -18,13 +18,14 @@ Gjelder markedsføreragenten og alle innlegg fra KmPris-kontoen.
 - Emneknagger: maks én, og bare der den passer (#løping, #løpesko).
 
 ## Fakta
+- **Prisoppdateringen er pauset fra 28.10.2026** (Prisjakts vilkår forbyr automatisk innhenting). Prisene er fra datoen i `SITE.updated`. Skriv «pris 26.10» e.l., ikke «nå», «denne uka» eller «ukens prisfall», til OPPDATERING.md sier at en lovlig priskilde er i bruk. Hent aldri noe fra Prisjakt selv.
 - Bruk bare tall fra kmpris.no/repoet (data.js, logg/oppdatering-*.md, spesifikasjoner.json). Aldri gjett eller pynt.
 - Ikke bruk priser som er «holdt tilbake» eller «mangler pris» i oppdateringsrapporten, eller ca.-priser uten å skrive «ca.».
 - Si hvilket kjønn prisen gjelder når herre og dame har ulik pris.
 - Priser endrer seg: skriv «nå» eller «denne uka», ikke «for alltid».
 
 ## Faste typer innlegg (rull mellom dem, 3–5 per uke)
-1. **Ukens prisfall**: største reelle fall siste oppdatering, med fra/til og lenke til skosiden.
+1. **Ukens prisfall**: PAUSET så lenge prisoppdateringen er pauset. Bruk i stedet lab-funn (f.eks. mest slitesterke yttersåle) med lenke til skosiden.
 2. **Billigst per km**: billigste sko per km i én kategori.
 3. **X vs Y**: én tydelig forskjell (vekt, dropp, pris per km) og lenke til sammenligningssiden.
 4. **Ny mot forrige versjon**: når forrige versjon er billigere, si det.
